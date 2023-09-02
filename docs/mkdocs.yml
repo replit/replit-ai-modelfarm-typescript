@@ -1,0 +1,84 @@
+site_name: Replit AI typescript
+repo_url: https://github.com/replit/replit-ai-typescript/
+site_url: https://ai-docs-typescript.replit.app/
+docs_dir: ./generated/markdown
+nav:
+  - Home: index.md
+  - API Reference:
+    - exports: ai.md
+    - Chat:
+      - chat: ai.chat.md
+      - chatstream: ai.chatstream.md
+      - types:
+        - ChatOptions: ai.chatoptions.md
+        - ChatModels: ai.chatmodel.md
+        - ChatMessage: ai.chatmessage.md
+    - Completion:
+      - completion: ai.completion.md
+      - completionstream: ai.completionstream.md
+      - types:
+        - CompletionOptions: ai.completionoptions.md
+        - CompletionModels: ai.completionmodel.md
+    - Embedding:
+      - embedding: ai.embedding.md
+      - types:
+        - EmbeddingOptions: ai.embeddingoptions.md
+        - EmbeddingModels: ai.embeddingmodel.md
+        - Embedding: ai.embeddingv.md
+    - ResultType:
+      - ai.result.md
+      - ai.errresult.md
+      - ai.okresult.md
+      - ai.requesterror.md
+not_in_nav: |
+  ai.chatmessage.author.md
+  ai.chatmessage.author.md
+  ai.chatmessage.content.md
+  ai.chatoptions.context.md
+  ai.chatoptions.examples.md
+  ai.chatoptions.messages.md
+  ai.chatoptions.model.md
+  ai.chatoptions.temperature.md
+  ai.completionoptions.model.md
+  ai.completionoptions.prompt.md
+  ai.completionoptions.temperature.md
+  ai.embeddingoptions.content.md
+  ai.embeddingoptions.model.md
+  ai.embeddingv.truncated.md
+  ai.embeddingv.values.md
+  ai.requesterror.message.md
+  ai.requesterror.statuscode.md
+  ai.errresult.error.md
+  ai.errresult.errorextras.md
+  ai.errresult.ok.md
+  ai.errresult.value.md
+  ai.okresult.error.md
+  ai.okresult.ok.md
+  ai.okresult.value.md
+theme:
+  name: material
+  palette:
+    - scheme: slate
+  font:
+    text: IBM Plex Sans
+    code: IBM Plex Mono
+  features:
+    - navigation.instant
+    - content.code.copy
+    - search.highlight
+    - search.share
+    - search.suggest
+    - navigation.indexes
+    - navigation.tabs
+plugins:
+  - offline
+  - search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences

@@ -1,0 +1,37 @@
+entrypoint = "index.js"
+run = "npm run test:watch"
+
+modules = ["python-3.10:v18-20230807-322e88b"]
+
+hidden = [".config", "package-lock.json"]
+
+[nix]
+channel = "stable-22_11"
+
+[env]
+XDG_CONFIG_HOME = "$REPL_HOME/.config"
+PATH = "$REPL_HOME/.config/npm/node_global/bin:$REPL_HOME/node_modules/.bin"
+npm_config_prefix = "$REPL_HOME/.config/npm/node_global"
+
+[packager]
+language = "nodejs"
+
+  [packager.features]
+  packageSearch = true
+  guessImports = false
+  enabledForHosting = false
+
+[languages]
+  [languages.javascript]
+  pattern = "**/{*.js,*.jsx,*.ts,*.tsx,*.json}"
+    [languages.javascript.languageServer]
+    start = "./node_modules/.bin/typescript-language-server --stdio"
+      [[languages.javascript.languageServer.initializationOptions.plugins]]
+      name = "typescript-eslint-language-service"
+      location = "./node_modules/typescript-eslint-language-service"
+
+[deployment]
+build = ["sh", "-c", "npm run build:docs"]
+deploymentTarget = "static"
+publicDir = "docs/generated/website"
+  
