@@ -8,7 +8,6 @@ test('non streaming chat', async () => {
     messages: [
       { content: "what is the meaning of life", author: "user" }
     ],
-    temperature: 0.5,
     streaming: false
   });
 
@@ -27,7 +26,6 @@ test('streaming chat', async () => {
     messages: [
       { content: "what is the meaning of life", author: "user" }
     ],
-    temperature: 0.5,
     streaming: true
   });
 

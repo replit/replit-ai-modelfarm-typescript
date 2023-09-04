@@ -1,7 +1,6 @@
 import all from 'it-all';
-import { pipe } from 'it-pipe';
 import * as result from './result';
-import streamToIterator from 'browser-readablestream-to-it';
+import responseBodyToIterator from './responseBodyToIterator';
 
 const endpoint = 'http://staging-modelfarm.ai.gcp.replit.com';
 const nonStreamingUrl = `${endpoint}/chat`;
@@ -44,18 +43,6 @@ interface ChatError {
 
 type StreamingChatResponse = result.Result<AsyncGenerator<Message>, ChatError>;
 type NonStreamingChatResponse = result.Result<Message, ChatError>;
-
-interface RestBody {
-  model: Model;
-  parameters: {
-    prompts: Array<{
-      context?: string;
-      examples?: Array<Message>;
-      messages: Array<Message>;
-    }>;
-  };
-}
-
 
 export default async function chat(
   input: NonStreamingInput,
@@ -100,28 +87,10 @@ export default async function chat(
     });
   }
 
-  const iterator = pipe(
-    streamToIterator(response.body),
-    async function*(source) {
-      const decoder = new TextDecoder('utf-8');
-
-      for await (const v of source) {
-        yield decoder.decode(v, { stream: true });
-      }
-
-      return;
-    },
-    async function*(source): AsyncGenerator<Message> {
-      for await (const v of source) {
-        const json = JSON.parse(v);
-
-        yield {
-          content: json.responses[0].candidates[0].message.content,
-          author: json.responses[0].candidates[0].message.author,
-        };
-      }
-    },
-  );
+  const iterator = responseBodyToIterator(response.body, (json: any): Message => ({
+    content: json.responses[0].candidates[0].message.content,
+    author: json.responses[0].candidates[0].message.author,
+  }));
 
   if (input.streaming) {
     return result.Ok(iterator);
