@@ -1,1 +1,1 @@
-https://replit.com/@util/replit-ai-typescript
+# @replit/ai
