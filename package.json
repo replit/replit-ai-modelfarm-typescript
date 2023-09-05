@@ -1,6 +1,6 @@
 {
   "name": "@replit-internal/ai",
-  "version": "0.0.1-alpha.2",
+  "version": "0.0.1-alpha.3",
   "description": "",
   "scripts": {
     "test": "vitest",
@@ -15,11 +15,11 @@
       "import": {
         "default": "./dist/index.js"
       },
-      "default": "./dist/index.cjs",
+      "default": "./dist/index.js",
       "require": "./dist/index.js"
     }
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "keywords": [
     "replit",
@@ -38,11 +38,10 @@
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
     "typescript-language-server": "^3.3.2",
-    "vitest": "^0.34.3"
-  },
-  "dependencies": {
+    "vitest": "^0.34.3",
     "browser-readablestream-to-it": "^2.0.4",
     "it-all": "^3.0.3",
     "it-pipe": "^3.0.1"
-  }
+  },
+  "dependencies": {}
 }
