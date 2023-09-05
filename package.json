@@ -27,7 +27,7 @@
   "author": "",
   "type": "module",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "devDependencies": {
     "@jest/globals": "^29.6.4",
     "@types/node": "^18.0.6",
