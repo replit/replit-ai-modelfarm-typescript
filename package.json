@@ -1,6 +1,6 @@
 {
-  "name": "nodejs",
-  "version": "1.0.0",
+  "name": "@replit/ai",
+  "version": "0.0.1-alpha.0",
   "description": "",
   "scripts": {
     "test": "vitest",
@@ -20,10 +20,14 @@
   },
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
-  "keywords": [],
+  "keywords": [
+    "replit",
+    "ai"
+  ],
   "author": "",
   "type": "module",
-  "license": "ISC",
+  "private": true,
+  "license": "Apache-2.0",
   "devDependencies": {
     "@jest/globals": "^29.6.4",
     "@types/node": "^18.0.6",
