@@ -1,8 +1,8 @@
-import all from 'it-all';
-import * as result from './result';
-import responseBodyToIterator from './responseBodyToIterator';
+import all from "it-all";
+import * as result from "./result";
+import responseBodyToIterator from "./responseBodyToIterator";
 
-const endpoint = 'http://staging-modelfarm.ai.gcp.replit.com';
+const endpoint = "http://staging-modelfarm.ai.gcp.replit.com";
 const nonStreamingUrl = `${endpoint}/chat`;
 const streamingUrl = `${endpoint}/chat_streaming`;
 
@@ -12,7 +12,7 @@ interface Message {
 }
 
 // TODO: Add more?
-type Model = 'chat-bison';
+type Model = "chat-bison";
 
 interface Input {
   model: Model;
@@ -45,19 +45,19 @@ type StreamingChatResponse = result.Result<AsyncGenerator<Message>, ChatError>;
 type NonStreamingChatResponse = result.Result<Message, ChatError>;
 
 export default async function chat(
-  input: NonStreamingInput,
+  input: NonStreamingInput
 ): Promise<NonStreamingChatResponse>;
 export default async function chat(
-  input: StreamingInput,
+  input: StreamingInput
 ): Promise<StreamingChatResponse>;
 export default async function chat(
-  input: Input,
+  input: Input
 ): Promise<StreamingChatResponse | NonStreamingChatResponse> {
   let response = await fetch(input.streaming ? streamingUrl : nonStreamingUrl, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer $AUTH_TOKEN', // TODO auth
+      "Content-Type": "application/json",
+      Authorization: "Bearer $AUTH_TOKEN", // TODO auth
     },
     body: JSON.stringify({
       model: input.model,
@@ -66,10 +66,10 @@ export default async function chat(
           {
             context: input.context,
             examples: input.examples,
-            messages: input.messages
-          }
-        ]
-      }
+            messages: input.messages,
+          },
+        ],
+      },
     }),
   });
 
@@ -82,15 +82,18 @@ export default async function chat(
 
   if (!response.body) {
     return result.Err({
-      message: 'No response body',
+      message: "No response body",
       statusCode: response.status,
     });
   }
 
-  const iterator = responseBodyToIterator(response.body, (json: any): Message => ({
-    content: json.responses[0].candidates[0].message.content,
-    author: json.responses[0].candidates[0].message.author,
-  }));
+  const iterator = responseBodyToIterator(
+    response.body,
+    (json: any): Message => ({
+      content: json.responses[0].candidates[0].message.content,
+      author: json.responses[0].candidates[0].message.author,
+    })
+  );
 
   if (input.streaming) {
     return result.Ok(iterator);
@@ -100,11 +103,11 @@ export default async function chat(
 
   let author = allMessages[0]?.author;
   if (!author) {
-    author = "assistant"
+    author = "assistant";
   }
 
   return result.Ok({
-    content: allMessages.reduce((acc, { content }) => acc + content, ''),
+    content: allMessages.reduce((acc, { content }) => acc + content, ""),
     author,
   });
 }
