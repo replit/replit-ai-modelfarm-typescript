@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "test": "vitest",
-    "test:watch": "vitest",
+    "test": "vitest src/*",
+    "test:watch": "vitest src/*",
     "build": "tsup src/index.ts  --sourcemap --dts --platform node --format esm,cjs",
-    "prepublishOnly": "npm run build"
+    "test:build": "vitest buildtests/*",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run test && npm run build && npm run test:build"
   },
   "exports": {
     "./package.json": "./package.json",
