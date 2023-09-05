@@ -5,7 +5,8 @@
   "scripts": {
     "test": "vitest",
     "test:watch": "vitest",
-    "build": "tsup src/index.ts  --sourcemap --dts --platform node --format esm,cjs"
+    "build": "tsup src/index.ts  --sourcemap --dts --platform node --format esm,cjs",
+    "prepublishOnly": "npm run build"
   },
   "exports": {
     "./package.json": "./package.json",
