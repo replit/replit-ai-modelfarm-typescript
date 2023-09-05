@@ -1,6 +1,6 @@
 {
   "name": "@replit-internal/ai",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1-alpha.1",
   "description": "",
   "scripts": {
     "test": "vitest",
@@ -24,6 +24,9 @@
   "keywords": [
     "replit",
     "ai"
+  ],
+  "files": [
+    "dist/*"
   ],
   "author": "",
   "type": "module",

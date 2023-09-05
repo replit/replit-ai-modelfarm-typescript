@@ -1,5 +1,9 @@
 # @replit/ai changelog
 
+## 0.0.1-alpha.1
+
+- fixed package.json > files
+
 ## 0.0.1-alpha.0
 
 - init
