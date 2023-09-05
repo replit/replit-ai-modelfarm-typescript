@@ -23,3 +23,6 @@ jobs:
 
       - name: Typecheck and Build
         run: npm run build
+
+      - name: Test the build
+        run: npm run test:build
