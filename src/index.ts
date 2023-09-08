@@ -1,4 +1,12 @@
-import { chat, chatStream, ChatOptions, ChatMessage, ChatModel } from './chat';
+import {
+  chat,
+  chatStream,
+  chatMultipleChoices,
+  ChatMultipleChoicesOptions,
+  ChatOptions,
+  ChatMessage,
+  ChatModel,
+} from './chat';
 import {
   completion,
   completionStream,
@@ -14,12 +22,20 @@ import {
   EmbeddingOptions,
 } from './embedding';
 
-export { chat, chatStream, completion, completionStream, embedding };
+export {
+  chat,
+  chatStream,
+  chatMultipleChoices,
+  completion,
+  completionStream,
+  embedding,
+};
 export type {
   Result,
   OkResult,
   ErrResult,
   ChatOptions,
+  ChatMultipleChoicesOptions,
   CompletionOptions,
   ChatMessage,
   CompletionModel,
