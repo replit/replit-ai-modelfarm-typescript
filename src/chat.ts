@@ -80,16 +80,16 @@ export async function chat(
     return res;
   }
 
-  const allMessages = await all(res.value);
+  const allResponses = await all(res.value);
 
-  let author = allMessages[0]?.message?.author;
+  let author = allResponses[0]?.message?.author;
   if (!author) {
     author = 'assistant';
   }
 
   return result.Ok({
     message: {
-      content: allMessages.reduce(
+      content: allResponses.reduce(
         (acc, { message: { content } }) => acc + content,
         '',
       ),

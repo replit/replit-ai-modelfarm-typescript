@@ -49,10 +49,10 @@ export async function completion(
     return res;
   }
 
-  const allText = await all(res.value);
+  const allResponses = await all(res.value);
 
   return result.Ok({
-    completion: allText.map(({ completion }) => completion).join(''),
+    completion: allResponses.map(({ completion }) => completion).join(''),
   });
 }
 
@@ -89,6 +89,8 @@ async function completionImpl(
       model: options.model,
       parameters: {
         prompts: [options.prompt],
+        temperature: options.temperature,
+        maxOutputTokens: options.maxOutputTokens,
       },
     },
     (json: Response): { completion: string } => {
