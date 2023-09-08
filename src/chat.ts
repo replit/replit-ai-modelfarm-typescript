@@ -65,9 +65,7 @@ export interface ChatMultipleChoicesOptions extends ChatOptions {
 }
 
 /**
- * Gets multiple chat completions for a single conversation.
- * The result contains an iterator of messages, please note that this would be
- * a *single message* that has the contents chunked up.
+ * Gets multiple chat completions for a conversation.
  * @public
  */
 export async function chatMultipleChoices(
