@@ -205,8 +205,6 @@ async function chatImpl(
         throw new Error('Expected at least one message');
       }
 
-      console.log(json.responses[0].candidates.length);
-
       return {
         choices: json.responses[0].candidates.map(({ message }) => ({
           message: {

@@ -8,7 +8,7 @@ test('non streaming chat', async () => {
     model: 'chat-bison',
     messages: [{ content: 'what is the meaning of life', author: 'user' }],
     temperature: 0.5,
-    maxOutputTokens: 1024,
+    maxOutputTokens: 128,
   });
 
   expect(result.error).toBeFalsy();
@@ -25,7 +25,7 @@ test('streaming chat', async () => {
     model: 'chat-bison',
     messages: [{ content: 'what is the meaning of life', author: 'user' }],
     temperature: 0.5,
-    maxOutputTokens: 1024,
+    maxOutputTokens: 128,
   });
 
   expect(result.error).toBeFalsy();
@@ -47,7 +47,7 @@ test('chat with multiple choices', async () => {
     model: 'chat-bison',
     messages: [{ content: 'what is the meaning of life', author: 'user' }],
     temperature: 0.5,
-    maxOutputTokens: 1024,
+    maxOutputTokens: 128,
     choicesCount: 4,
   });
 
