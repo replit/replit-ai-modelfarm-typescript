@@ -9,9 +9,11 @@ import {
 } from './chat';
 import {
   completion,
+  completionMultipleChoices,
   completionStream,
   CompletionModel,
   CompletionOptions,
+  CompletionMultipleChoicesOptions,
 } from './completion';
 import { Result, OkResult, ErrResult } from './result';
 import { RequestError } from './request';
@@ -28,6 +30,7 @@ export {
   chatMultipleChoices,
   completion,
   completionStream,
+  completionMultipleChoices,
   embedding,
 };
 export type {
@@ -37,6 +40,7 @@ export type {
   ChatOptions,
   ChatMultipleChoicesOptions,
   CompletionOptions,
+  CompletionMultipleChoicesOptions,
   ChatMessage,
   CompletionModel,
   ChatModel,
