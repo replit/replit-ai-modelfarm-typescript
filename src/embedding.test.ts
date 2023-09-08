@@ -10,7 +10,7 @@ test('embedding', async () => {
   });
 
   expect(completion.error).toBeFalsy();
-  expect(completion.value).toMatchObject({
+  expect(completion.value?.embeddings).toMatchObject({
     values: expect.arrayContaining([expect.any(Number)]),
     truncated: expect.any(Boolean),
   });
