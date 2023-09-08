@@ -45,7 +45,7 @@ interface Response {
  */
 export async function embedding(
   options: EmbeddingOptions,
-): Promise<result.Result<EmbeddingV, RequestError>> {
+): Promise<result.Result<{ embedding: EmbeddingV }, RequestError>> {
   const res = await makeRequest(
     '/embedding',
     {
@@ -91,5 +91,5 @@ export async function embedding(
     });
   }
 
-  return result.Ok(e);
+  return result.Ok({ embedding: e });
 }

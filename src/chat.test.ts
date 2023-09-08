@@ -6,22 +6,26 @@ import * as replitai from './index';
 test('non streaming chat', async () => {
   const chat = await replitai.chat({
     model: 'chat-bison',
-    context: 'You are a meme bot',
     messages: [{ content: 'what is the meaning of life', author: 'user' }],
+    temperature: 0.5,
+    maxOutputTokens: 1024,
   });
 
   expect(chat.error).toBeFalsy();
   expect(chat.value).toMatchObject({
-    content: expect.any(String),
-    author: expect.any(String),
+    message: {
+      content: expect.any(String),
+      author: expect.any(String),
+    },
   });
 });
 
 test('streaming chat', async () => {
   const chat = await replitai.chatStream({
     model: 'chat-bison',
-    context: 'You are a meme bot',
     messages: [{ content: 'what is the meaning of life', author: 'user' }],
+    temperature: 0.5,
+    maxOutputTokens: 1024,
   });
 
   expect(chat.error).toBeFalsy();
@@ -30,7 +34,7 @@ test('streaming chat', async () => {
     throw new Error('wat');
   }
 
-  for await (const message of chat.value) {
+  for await (const { message } of chat.value) {
     expect(message).toMatchObject({
       content: expect.any(String),
       author: expect.any(String),

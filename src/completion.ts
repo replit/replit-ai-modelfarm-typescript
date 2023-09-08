@@ -8,9 +8,6 @@ import makeRequest, { RequestError } from './request';
  */
 export type CompletionModel = 'text-bison';
 
-// Ideally this relationship is inverted, but it makes documentation nicer this way
-const completionModels = ['text-bison'] as const;
-
 /**
  * Options for completion request
  * @public
@@ -19,7 +16,7 @@ export interface CompletionOptions {
   /**
    * Specifies the model to use
    */
-  model?: CompletionModel;
+  model: CompletionModel;
   /**
    * The string/text to complete
    */
@@ -28,8 +25,15 @@ export interface CompletionOptions {
    * Sampling temperature between 0 and 1. The higher the value, the more
    * likely the model will produce a completion that is more creative and
    * imaginative.
+   * Defaults to 0
    */
   temperature?: number;
+  /**
+   * The maximum number of tokens generated in the completion.
+   * The absolute maximum value is limited by model's context size.
+   * Defaults to 1024
+   */
+  maxOutputTokens?: number;
 }
 
 /**
@@ -38,16 +42,18 @@ export interface CompletionOptions {
  */
 export async function completion(
   options: CompletionOptions,
-): Promise<result.Result<string, RequestError>> {
+): Promise<result.Result<{ completion: string }, RequestError>> {
   const res = await completionImpl(options, '/completion');
 
   if (!res.ok) {
     return res;
   }
 
-  const allText = await all(res.value);
+  const allResponses = await all(res.value);
 
-  return result.Ok(allText.join(''));
+  return result.Ok({
+    completion: allResponses.map(({ completion }) => completion).join(''),
+  });
 }
 
 /**
@@ -56,7 +62,9 @@ export async function completion(
  */
 export async function completionStream(
   options: CompletionOptions,
-): Promise<result.Result<AsyncGenerator<string>, RequestError>> {
+): Promise<
+  result.Result<AsyncGenerator<{ completion: string }>, RequestError>
+> {
   return completionImpl(options, '/completion_streaming');
 }
 
@@ -72,23 +80,27 @@ interface Response {
 async function completionImpl(
   options: CompletionOptions,
   urlPath: string,
-): Promise<result.Result<AsyncGenerator<string>, RequestError>> {
+): Promise<
+  result.Result<AsyncGenerator<{ completion: string }>, RequestError>
+> {
   return makeRequest(
     urlPath,
     {
-      model: options.model ?? completionModels[0],
+      model: options.model,
       parameters: {
         prompts: [options.prompt],
+        temperature: options.temperature,
+        maxOutputTokens: options.maxOutputTokens,
       },
     },
-    (json: Response): string => {
+    (json: Response): { completion: string } => {
       const content = json.responses[0]?.choices[0]?.content;
 
       if (typeof content == 'undefined') {
         throw new Error('Expected content');
       }
 
-      return content;
+      return { completion: content };
     },
   );
 }

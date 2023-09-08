@@ -8,9 +8,6 @@ import makeRequest, { RequestError } from './request';
  */
 export type ChatModel = 'chat-bison';
 
-// Ideally this relationship is inverted, but it makes documentation nicer this way
-const chatModels: Array<ChatModel> = ['chat-bison'];
-
 /**
  * Options for chat request
  * @public
@@ -19,15 +16,7 @@ export interface ChatOptions {
   /**
    * Specifies the model to use
    */
-  model?: ChatModel;
-  /**
-   * Preamble that introduces the conversation context
-   */
-  context?: string;
-  /**
-   * Examples of the conversation context
-   */
-  examples?: Array<ChatMessage>;
+  model: ChatModel;
   /**
    * Previous messages in the conversation
    */
@@ -36,8 +25,15 @@ export interface ChatOptions {
    * Sampling temperature between 0 and 1. The higher the value, the more
    * likely the model will produce a completion that is more creative and
    * imaginative.
+   * Defaults to 0
    */
   temperature?: number;
+  /**
+   * The maximum number of tokens generated in the chat completion.
+   * The absolute maximum value is limited by model's context size.
+   * Defaults to 1024
+   */
+  maxOutputTokens?: number;
 }
 
 /**
@@ -65,7 +61,9 @@ export interface ChatMessage {
  */
 export async function chatStream(
   options: ChatOptions,
-): Promise<result.Result<AsyncGenerator<ChatMessage>, RequestError>> {
+): Promise<
+  result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
+> {
   return chatImpl(options, '/chat_streaming');
 }
 
@@ -75,23 +73,28 @@ export async function chatStream(
  */
 export async function chat(
   options: ChatOptions,
-): Promise<result.Result<ChatMessage, RequestError>> {
+): Promise<result.Result<{ message: ChatMessage }, RequestError>> {
   const res = await chatImpl(options, '/chat');
 
   if (!res.ok) {
     return res;
   }
 
-  const allMessages = await all(res.value);
+  const allResponses = await all(res.value);
 
-  let author = allMessages[0]?.author;
+  let author = allResponses[0]?.message?.author;
   if (!author) {
     author = 'assistant';
   }
 
   return result.Ok({
-    content: allMessages.reduce((acc, { content }) => acc + content, ''),
-    author,
+    message: {
+      content: allResponses.reduce(
+        (acc, { message: { content } }) => acc + content,
+        '',
+      ),
+      author,
+    },
   });
 }
 
@@ -107,23 +110,25 @@ interface Response {
 async function chatImpl(
   options: ChatOptions,
   urlPath: string,
-): Promise<result.Result<AsyncGenerator<ChatMessage>, RequestError>> {
+): Promise<
+  result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
+> {
   return makeRequest(
     urlPath,
     {
-      model: options.model ?? chatModels[0],
+      model: options.model,
       parameters: {
         prompts: [
           {
-            context: options.context,
-            examples: options.examples,
+            context: '',
             messages: options.messages,
           },
         ],
         temperature: options.temperature,
+        maxOutputTokens: options.maxOutputTokens,
       },
     },
-    (json: Response): ChatMessage => {
+    (json: Response): { message: ChatMessage } => {
       const message = json.responses[0]?.candidates[0]?.message;
 
       if (!message) {
@@ -131,8 +136,10 @@ async function chatImpl(
       }
 
       return {
-        content: message.content,
-        author: message.author,
+        message: {
+          content: message.content,
+          author: message.author,
+        },
       };
     },
   );

@@ -2,30 +2,30 @@ import { expect, test } from 'vitest';
 import * as replitai from './index';
 
 test('non streaming completion', async () => {
-  const completion = await replitai.completion({
+  const result = await replitai.completion({
     model: 'text-bison',
     prompt:
       "Here's an essay about why the chicken crossed the road\n # The Chicken and The Road\n",
   });
 
-  expect(completion.error).toBeFalsy();
-  expect(completion.value).toEqual(expect.any(String));
+  expect(result.error).toBeFalsy();
+  expect(result.value?.completion).toEqual(expect.any(String));
 });
 
 test('streaming completion', async () => {
-  const completion = await replitai.completionStream({
+  const result = await replitai.completionStream({
     model: 'text-bison',
     prompt:
       "Here's an essay about why the chicken crossed the road\n # The Chicken and The Road\n",
   });
 
-  expect(completion.error).toBeFalsy();
+  expect(result.error).toBeFalsy();
 
-  if (!completion.ok) {
+  if (!result.ok) {
     throw new Error('wat');
   }
 
-  for await (const message of completion.value) {
-    expect(message).toEqual(expect.any(String));
+  for await (const { completion } of result.value) {
+    expect(completion).toEqual(expect.any(String));
   }
 });
