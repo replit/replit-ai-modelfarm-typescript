@@ -46,7 +46,7 @@ test('chat with multiple choices', async () => {
   const result = await replitai.chatMultipleChoices({
     model: 'chat-bison',
     messages: [{ content: 'what is the meaning of life', author: 'user' }],
-    temperature: 0.5,
+    temperature: 1,
     maxOutputTokens: 128,
     choicesCount: 4,
   });

@@ -41,7 +41,7 @@ test('completion with multiple choices', async () => {
     model: 'text-bison',
     prompt:
       "Here's an essay about why the chicken crossed the road\n # The Chicken and The Road\n",
-    temperature: 0.5,
+    temperature: 1,
     maxOutputTokens: 128,
     choicesCount: 4,
   });
