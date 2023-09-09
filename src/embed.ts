@@ -14,7 +14,7 @@ const embeddingModels = ['textembedding-gecko'] as const;
 /**
  * Options for embedding request
  */
-export interface EmbeddingOptions {
+export interface EmbedOptions {
   model?: EmbeddingModel;
   content: string;
 }
@@ -44,7 +44,7 @@ interface Response {
  * @public
  */
 export async function embed(
-  options: EmbeddingOptions,
+  options: EmbedOptions,
 ): Promise<result.Result<{ embedding: Embedding }, RequestError>> {
   const res = await makeRequest(
     '/embedding',
