@@ -59,7 +59,7 @@ export interface ChatMultipleChoicesOptions extends ChatOptions {
    * Number of chat completions to generate. Minimum 1, the maximum
    * depends on the model, the returned choices will be automatically
    * adjusted to fit the model. You should not treat this as a guarantee,
-   * what you will get is a number of choices upto `choicesCount`.
+   * what you will get is a number of choices up to `choicesCount`.
    */
   choicesCount: number;
 }
