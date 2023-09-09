@@ -9,22 +9,26 @@ nav:
     - Chat:
       - chat: ai.chat.md
       - chatstream: ai.chatstream.md
+      - chatMultipleChoices: ai.chatmultiplechoices.md
       - types:
         - ChatOptions: ai.chatoptions.md
+        - ChatMultipleChoicesOptions: ai.chatmultiplechoicesoptions.md
         - ChatModels: ai.chatmodel.md
         - ChatMessage: ai.chatmessage.md
-    - Completion:
-      - completion: ai.completion.md
-      - completionstream: ai.completionstream.md
+    - Complete:
+      - complete: ai.complete.md
+      - completestream: ai.completestream.md
+      - completeMultipleChoices: ai.completemultiplechoices.md
       - types:
-        - CompletionOptions: ai.completionoptions.md
-        - CompletionModels: ai.completionmodel.md
+        - CompleteOptions: ai.completeoptions.md
+        - CompleteMultipleChoicesOptions: ai.completemultiplechoicesoptions.md
+        - CompleteModels: ai.completemodel.md
     - Embedding:
-      - embedding: ai.embedding.md
+      - embed: ai.embed.md
       - types:
-        - EmbeddingOptions: ai.embeddingoptions.md
-        - EmbeddingModels: ai.embeddingmodel.md
-        - Embedding: ai.embeddingv.md
+        - EmbedOptions: ai.embedoptions.md
+        - EmbedModels: ai.embedmodel.md
+        - Embedding: ai.embedding.md
     - ResultType:
       - ai.result.md
       - ai.errresult.md
@@ -39,13 +43,17 @@ not_in_nav: |
   ai.chatoptions.messages.md
   ai.chatoptions.model.md
   ai.chatoptions.temperature.md
-  ai.completionoptions.model.md
-  ai.completionoptions.prompt.md
-  ai.completionoptions.temperature.md
-  ai.embeddingoptions.content.md
-  ai.embeddingoptions.model.md
-  ai.embeddingv.truncated.md
-  ai.embeddingv.values.md
+  ai.chatoptions.maxoutputtokens.md
+  ai.chatmultiplechoicesoptions.choicescount.md
+  ai.completeoptions.model.md
+  ai.completeoptions.prompt.md
+  ai.completeoptions.temperature.md
+  ai.completeoptions.maxoutputtokens.md
+  ai.completemultiplechoicesoptions.choicescount.md
+  ai.embedoptions.content.md
+  ai.embedoptions.model.md
+  ai.embedding.truncated.md
+  ai.embedding.values.md
   ai.requesterror.message.md
   ai.requesterror.statuscode.md
   ai.errresult.error.md

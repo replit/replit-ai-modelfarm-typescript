@@ -6,7 +6,7 @@ import makeRequest, { RequestError } from './request';
  * Available models for text embedding
  * @public
  */
-export type EmbeddingModel = 'textembedding-gecko';
+export type EmbedModel = 'textembedding-gecko';
 
 // Ideally this relationship is inverted, but it makes documentation nicer this way
 const embeddingModels = ['textembedding-gecko'] as const;
@@ -15,7 +15,7 @@ const embeddingModels = ['textembedding-gecko'] as const;
  * Options for embedding request
  */
 export interface EmbedOptions {
-  model?: EmbeddingModel;
+  model?: EmbedModel;
   content: string;
 }
 

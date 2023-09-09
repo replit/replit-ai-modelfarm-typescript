@@ -7,7 +7,7 @@ import { pipe } from 'it-pipe';
  * Available models for text completion
  * @public
  */
-export type CompletionModel = 'text-bison';
+export type CompleteModel = 'text-bison';
 
 /**
  * Options for completion request
@@ -17,7 +17,7 @@ export interface CompleteOptions {
   /**
    * Specifies the model to use
    */
-  model: CompletionModel;
+  model: CompleteModel;
   /**
    * The string/text to complete
    */
