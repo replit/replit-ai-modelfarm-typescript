@@ -1,6 +1,7 @@
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';
+import { pipe } from 'it-pipe';
 
 /**
  * Available models for text completion
@@ -36,6 +37,46 @@ export interface CompletionOptions {
   maxOutputTokens?: number;
 }
 
+export interface CompletionMultipleChoicesOptions extends CompletionOptions {
+  /**
+   * Number of completions to generate. Minimum 1, the maximum
+   * depends on the model, the returned choices will be automatically
+   * adjusted to fit the model. You should not treat this as a guarantee,
+   * what you will get is a number of choices upto `choicesCount`.
+   */
+  choicesCount: number;
+}
+
+/**
+ * Gets multiple completions for a piece of text.
+ * @public
+ */
+export async function completionMultipleChoices(
+  options: CompletionMultipleChoicesOptions,
+): Promise<
+  result.Result<{ choices: Array<{ completion: string }> }, RequestError>
+> {
+  const res = await completionImpl(options, '/completion');
+
+  if (!res.ok) {
+    return res;
+  }
+
+  const responses = await all(res.value);
+
+  if (responses.length > 1) {
+    throw new Error('Got multiple responses from non-streaming endpoint');
+  }
+
+  const response = responses[0];
+
+  if (!response) {
+    throw new Error('Expected at least one response');
+  }
+
+  return result.Ok(response);
+}
+
 /**
  * Gets the completion for a piece of text.
  * @public
@@ -49,11 +90,29 @@ export async function completion(
     return res;
   }
 
-  const allResponses = await all(res.value);
+  const responses = await all(res.value);
 
-  return result.Ok({
-    completion: allResponses.map(({ completion }) => completion).join(''),
-  });
+  if (responses.length > 1) {
+    throw new Error('Got multiple responses from non-streaming endpoint');
+  }
+
+  const response = responses[0];
+
+  if (!response) {
+    throw new Error('Expected at least one response');
+  }
+
+  if (response.choices.length > 1) {
+    throw new Error('Got multiple choices without choicesCount');
+  }
+
+  const choice = response.choices[0];
+
+  if (!choice) {
+    throw new Error('Expected at least one choice');
+  }
+
+  return result.Ok(choice);
 }
 
 /**
@@ -65,7 +124,26 @@ export async function completionStream(
 ): Promise<
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
-  return completionImpl(options, '/completion_streaming');
+  const res = await completionImpl(options, '/completion_streaming');
+
+  if (!res.ok) {
+    return res;
+  }
+
+  return result.Ok(
+    pipe(res.value, async function* (source) {
+      for await (const v of source) {
+        const choice = v.choices[0];
+        if (!choice) {
+          throw new Error('Expected at least one choice');
+        }
+
+        yield choice;
+      }
+
+      return;
+    }),
+  );
 }
 
 // non exauhstive
@@ -78,10 +156,13 @@ interface Response {
 }
 
 async function completionImpl(
-  options: CompletionOptions,
+  options: CompletionOptions | CompletionMultipleChoicesOptions,
   urlPath: string,
 ): Promise<
-  result.Result<AsyncGenerator<{ completion: string }>, RequestError>
+  result.Result<
+    AsyncGenerator<{ choices: Array<{ completion: string }> }>,
+    RequestError
+  >
 > {
   return makeRequest(
     urlPath,
@@ -91,16 +172,22 @@ async function completionImpl(
         prompts: [options.prompt],
         temperature: options.temperature,
         maxOutputTokens: options.maxOutputTokens,
+        candidateCount:
+          'choicesCount' in options ? options.choicesCount : undefined,
       },
     },
-    (json: Response): { completion: string } => {
-      const content = json.responses[0]?.choices[0]?.content;
+    (json: Response): { choices: Array<{ completion: string }> } => {
+      console.log(json.responses[0]?.choices[0]?.content)
 
-      if (typeof content == 'undefined') {
-        throw new Error('Expected content');
+      if (!json.responses[0]?.choices[0]?.content) {
+        throw new Error('Expected at least one message');
       }
 
-      return { completion: content };
+      return {
+        choices: json.responses[0].choices.map(({ content }) => ({
+          completion: content,
+        })),
+      };
     },
   );
 }
