@@ -23,7 +23,7 @@ export interface EmbeddingOptions {
  * Embedding vector returned by an embedding request
  * @public
  */
-export interface EmbeddingV {
+export interface Embedding {
   /**
    * The embedding vectors corresponding to the words in the input text
    */
@@ -36,16 +36,16 @@ export interface EmbeddingV {
 
 // non exauhstive
 interface Response {
-  embeddings: Array<EmbeddingV>;
+  embeddings: Array<Embedding>;
 }
 
 /**
  * Converts text into numerical vectors
  * @public
  */
-export async function embedding(
+export async function embed(
   options: EmbeddingOptions,
-): Promise<result.Result<{ embedding: EmbeddingV }, RequestError>> {
+): Promise<result.Result<{ embedding: Embedding }, RequestError>> {
   const res = await makeRequest(
     '/embedding',
     {
@@ -55,7 +55,7 @@ export async function embedding(
       },
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (json: Response): EmbeddingV => {
+    (json: Response): Embedding => {
       const embedding = json.embeddings[0];
 
       if (!embedding) {

@@ -4,7 +4,7 @@ import { expect, test } from 'vitest';
 import * as replitai from './index';
 
 test('non streaming completion', async () => {
-  const result = await replitai.completion({
+  const result = await replitai.complete({
     model: 'text-bison',
     prompt:
       "Here's an essay about why the chicken crossed the road\n # The Chicken and The Road\n",
@@ -17,7 +17,7 @@ test('non streaming completion', async () => {
 });
 
 test('streaming completion', async () => {
-  const result = await replitai.completionStream({
+  const result = await replitai.completeStream({
     model: 'text-bison',
     prompt:
       "Here's an essay about why the chicken crossed the road\n # The Chicken and The Road\n",
@@ -37,7 +37,7 @@ test('streaming completion', async () => {
 });
 
 test('completion with multiple choices', async () => {
-  const result = await replitai.completionMultipleChoices({
+  const result = await replitai.completeMultipleChoices({
     model: 'text-bison',
     prompt:
       "Here's an essay about why the chicken crossed the road\n # The Chicken and The Road\n",

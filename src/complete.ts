@@ -51,12 +51,12 @@ export interface CompletionMultipleChoicesOptions extends CompletionOptions {
  * Gets multiple completions for a piece of text.
  * @public
  */
-export async function completionMultipleChoices(
+export async function completeMultipleChoices(
   options: CompletionMultipleChoicesOptions,
 ): Promise<
   result.Result<{ choices: Array<{ completion: string }> }, RequestError>
 > {
-  const res = await completionImpl(options, '/completion');
+  const res = await completeImpl(options, '/completion');
 
   if (!res.ok) {
     return res;
@@ -81,10 +81,10 @@ export async function completionMultipleChoices(
  * Gets the completion for a piece of text.
  * @public
  */
-export async function completion(
+export async function complete(
   options: CompletionOptions,
 ): Promise<result.Result<{ completion: string }, RequestError>> {
-  const res = await completionImpl(options, '/completion');
+  const res = await completeImpl(options, '/completion');
 
   if (!res.ok) {
     return res;
@@ -119,12 +119,12 @@ export async function completion(
  * Gets a stream of completions for a piece of text.
  * @public
  */
-export async function completionStream(
+export async function completeStream(
   options: CompletionOptions,
 ): Promise<
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
-  const res = await completionImpl(options, '/completion_streaming');
+  const res = await completeImpl(options, '/completion_streaming');
 
   if (!res.ok) {
     return res;
@@ -155,7 +155,7 @@ interface Response {
   }>;
 }
 
-async function completionImpl(
+async function completeImpl(
   options: CompletionOptions | CompletionMultipleChoicesOptions,
   urlPath: string,
 ): Promise<
@@ -177,8 +177,6 @@ async function completionImpl(
       },
     },
     (json: Response): { choices: Array<{ completion: string }> } => {
-      console.log(json.responses[0]?.choices[0]?.content)
-
       if (!json.responses[0]?.choices[0]?.content) {
         throw new Error('Expected at least one message');
       }

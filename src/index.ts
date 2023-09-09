@@ -8,30 +8,25 @@ import {
   ChatModel,
 } from './chat';
 import {
-  completion,
-  completionMultipleChoices,
-  completionStream,
+  complete,
+  completeMultipleChoices,
+  completeStream,
   CompletionModel,
   CompletionOptions,
   CompletionMultipleChoicesOptions,
-} from './completion';
+} from './complete';
 import { Result, OkResult, ErrResult } from './result';
 import { RequestError } from './request';
-import {
-  embedding,
-  EmbeddingV,
-  EmbeddingModel,
-  EmbeddingOptions,
-} from './embedding';
+import { embed, Embedding, EmbeddingModel, EmbeddingOptions } from './embed';
 
 export {
   chat,
   chatStream,
   chatMultipleChoices,
-  completion,
-  completionStream,
-  completionMultipleChoices,
-  embedding,
+  complete,
+  completeStream,
+  completeMultipleChoices,
+  embed,
 };
 export type {
   Result,
@@ -45,7 +40,7 @@ export type {
   CompletionModel,
   ChatModel,
   RequestError,
-  EmbeddingV,
+  Embedding,
   EmbeddingModel,
   EmbeddingOptions,
 };
