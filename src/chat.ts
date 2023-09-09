@@ -1,6 +1,7 @@
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';
+import { pipe } from 'it-pipe';
 
 /**
  * Available models for chat completion
@@ -53,6 +54,46 @@ export interface ChatMessage {
   author: string;
 }
 
+export interface ChatMultipleChoicesOptions extends ChatOptions {
+  /**
+   * Number of chat completions to generate. Minimum 1, the maximum
+   * depends on the model, the returned choices will be automatically
+   * adjusted to fit the model. You should not treat this as a guarantee,
+   * what you will get is a number of choices up to `choicesCount`.
+   */
+  choicesCount: number;
+}
+
+/**
+ * Gets multiple chat completions for a conversation.
+ * @public
+ */
+export async function chatMultipleChoices(
+  options: ChatMultipleChoicesOptions,
+): Promise<
+  result.Result<{ choices: Array<{ message: ChatMessage }> }, RequestError>
+> {
+  const res = await chatImpl(options, '/chat');
+
+  if (!res.ok) {
+    return res;
+  }
+
+  const responses = await all(res.value);
+
+  if (responses.length > 1) {
+    throw new Error('Got multiple responses from non-streaming endpoint');
+  }
+
+  const response = responses[0];
+
+  if (!response) {
+    throw new Error('Expected at least one response');
+  }
+
+  return result.Ok(response);
+}
+
 /**
  * Gets a single chat message completion for a conversation.
  * The result contains an iterator of messages, please note that this would be
@@ -64,7 +105,26 @@ export async function chatStream(
 ): Promise<
   result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
 > {
-  return chatImpl(options, '/chat_streaming');
+  const res = await chatImpl(options, '/chat_streaming');
+
+  if (!res.ok) {
+    return res;
+  }
+
+  return result.Ok(
+    pipe(res.value, async function* (source) {
+      for await (const v of source) {
+        const choice = v.choices[0];
+        if (!choice) {
+          throw new Error('Expected at least one choice');
+        }
+
+        yield choice;
+      }
+
+      return;
+    }),
+  );
 }
 
 /**
@@ -80,22 +140,29 @@ export async function chat(
     return res;
   }
 
-  const allResponses = await all(res.value);
+  const responses = await all(res.value);
 
-  let author = allResponses[0]?.message?.author;
-  if (!author) {
-    author = 'assistant';
+  if (responses.length > 1) {
+    throw new Error('Got multiple responses from non-streaming endpoint');
   }
 
-  return result.Ok({
-    message: {
-      content: allResponses.reduce(
-        (acc, { message: { content } }) => acc + content,
-        '',
-      ),
-      author,
-    },
-  });
+  const response = responses[0];
+
+  if (!response) {
+    throw new Error('Expected at least one response');
+  }
+
+  if (response.choices.length > 1) {
+    throw new Error('Got multiple choices without choicesCount');
+  }
+
+  const choice = response.choices[0];
+
+  if (!choice) {
+    throw new Error('Expected at least one choice');
+  }
+
+  return result.Ok(choice);
 }
 
 // non exauhstive
@@ -108,10 +175,13 @@ interface Response {
 }
 
 async function chatImpl(
-  options: ChatOptions,
+  options: ChatOptions | ChatMultipleChoicesOptions,
   urlPath: string,
 ): Promise<
-  result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
+  result.Result<
+    AsyncGenerator<{ choices: Array<{ message: ChatMessage }> }>,
+    RequestError
+  >
 > {
   return makeRequest(
     urlPath,
@@ -126,20 +196,22 @@ async function chatImpl(
         ],
         temperature: options.temperature,
         maxOutputTokens: options.maxOutputTokens,
+        candidateCount:
+          'choicesCount' in options ? options.choicesCount : undefined,
       },
     },
-    (json: Response): { message: ChatMessage } => {
-      const message = json.responses[0]?.candidates[0]?.message;
-
-      if (!message) {
-        throw new Error('Expected message');
+    (json: Response): { choices: Array<{ message: ChatMessage }> } => {
+      if (!json.responses[0]?.candidates[0]?.message) {
+        throw new Error('Expected at least one message');
       }
 
       return {
-        message: {
-          content: message.content,
-          author: message.author,
-        },
+        choices: json.responses[0].candidates.map(({ message }) => ({
+          message: {
+            content: message.content,
+            author: message.author,
+          },
+        })),
       };
     },
   );
