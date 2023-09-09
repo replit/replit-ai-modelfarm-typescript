@@ -13,7 +13,7 @@ export type CompletionModel = 'text-bison';
  * Options for completion request
  * @public
  */
-export interface CompletionOptions {
+export interface CompleteOptions {
   /**
    * Specifies the model to use
    */
@@ -37,7 +37,7 @@ export interface CompletionOptions {
   maxOutputTokens?: number;
 }
 
-export interface CompletionMultipleChoicesOptions extends CompletionOptions {
+export interface CompleteMultipleChoicesOptions extends CompleteOptions {
   /**
    * Number of completions to generate. Minimum 1, the maximum
    * depends on the model, the returned choices will be automatically
@@ -52,7 +52,7 @@ export interface CompletionMultipleChoicesOptions extends CompletionOptions {
  * @public
  */
 export async function completeMultipleChoices(
-  options: CompletionMultipleChoicesOptions,
+  options: CompleteMultipleChoicesOptions,
 ): Promise<
   result.Result<{ choices: Array<{ completion: string }> }, RequestError>
 > {
@@ -82,7 +82,7 @@ export async function completeMultipleChoices(
  * @public
  */
 export async function complete(
-  options: CompletionOptions,
+  options: CompleteOptions,
 ): Promise<result.Result<{ completion: string }, RequestError>> {
   const res = await completeImpl(options, '/completion');
 
@@ -120,7 +120,7 @@ export async function complete(
  * @public
  */
 export async function completeStream(
-  options: CompletionOptions,
+  options: CompleteOptions,
 ): Promise<
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
@@ -156,7 +156,7 @@ interface Response {
 }
 
 async function completeImpl(
-  options: CompletionOptions | CompletionMultipleChoicesOptions,
+  options: CompleteOptions | CompleteMultipleChoicesOptions,
   urlPath: string,
 ): Promise<
   result.Result<
