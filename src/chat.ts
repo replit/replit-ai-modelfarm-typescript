@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';
@@ -35,6 +36,10 @@ export interface ChatOptions {
    * Defaults to 1024
    */
   maxOutputTokens?: number;
+
+  // Allows extra model specific parameters.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 /**
@@ -183,21 +188,30 @@ async function chatImpl(
     RequestError
   >
 > {
+  const {
+    model,
+    messages,
+    temperature,
+    maxOutputTokens,
+    choicesCount,
+    ...otherOptions
+  } = options;
+
   return makeRequest(
     urlPath,
     {
-      model: options.model,
+      model: model,
       parameters: {
+        ...otherOptions,
         prompts: [
           {
             context: '',
-            messages: options.messages,
+            messages,
           },
         ],
-        temperature: options.temperature,
-        maxOutputTokens: options.maxOutputTokens,
-        candidateCount:
-          'choicesCount' in options ? options.choicesCount : undefined,
+        temperature,
+        maxOutputTokens,
+        candidateCount: 'choicesCount' in options ? choicesCount : undefined,
       },
     },
     (json: Response): { choices: Array<{ message: ChatMessage }> } => {

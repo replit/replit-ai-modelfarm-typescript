@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';
@@ -35,6 +36,11 @@ export interface CompleteOptions {
    * Defaults to 1024
    */
   maxOutputTokens?: number;
+  9;
+
+  // Allows extra model specific parameters.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface CompleteMultipleChoicesOptions extends CompleteOptions {
@@ -164,16 +170,26 @@ async function completeImpl(
     RequestError
   >
 > {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const {
+    model,
+    prompt,
+    temperature,
+    maxOutputTokens,
+    choicesCount,
+    ...otherOptions
+  } = options;
+
   return makeRequest(
     urlPath,
     {
-      model: options.model,
+      model: model,
       parameters: {
-        prompts: [options.prompt],
-        temperature: options.temperature,
-        maxOutputTokens: options.maxOutputTokens,
-        candidateCount:
-          'choicesCount' in options ? options.choicesCount : undefined,
+        ...otherOptions,
+        prompts: [prompt],
+        temperature: temperature,
+        maxOutputTokens: maxOutputTokens,
+        candidateCount: 'choicesCount' in options ? choicesCount : undefined,
       },
     },
     (json: Response): { choices: Array<{ completion: string }> } => {

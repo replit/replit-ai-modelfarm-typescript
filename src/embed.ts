@@ -17,6 +17,10 @@ const embeddingModels = ['textembedding-gecko'] as const;
 export interface EmbedOptions {
   model?: EmbedModel;
   content: string;
+
+  // Allows extra model specific parameters.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 /**
@@ -46,12 +50,14 @@ interface Response {
 export async function embed(
   options: EmbedOptions,
 ): Promise<result.Result<{ embedding: Embedding }, RequestError>> {
+  const { model, content, ...otherOptions } = options;
   const res = await makeRequest(
     '/embedding',
     {
-      model: options.model ?? embeddingModels[0],
+      model: model ?? embeddingModels[0],
       parameters: {
-        content: [{ content: options.content }],
+        ...otherOptions,
+        content: [{ content: content }],
       },
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
