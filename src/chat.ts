@@ -26,13 +26,11 @@ export interface ChatOptions {
    * Sampling temperature between 0 and 1. The higher the value, the more
    * likely the model will produce a completion that is more creative and
    * imaginative.
-   * Defaults to 0
    */
   temperature?: number;
   /**
    * The maximum number of tokens generated in the chat completion.
    * The absolute maximum value is limited by model's context size.
-   * Defaults to 1024
    */
   maxOutputTokens?: number;
 }
