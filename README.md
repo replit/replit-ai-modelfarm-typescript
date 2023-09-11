@@ -57,7 +57,7 @@ const result = ai.chat({
     content: 'How Can Mirrors Be Real If Our Eyes Aren\'t Real'
   }],
   // How creative you want the bot to be from 0-1
-  temperature: 0.9,
+  temperature: 0.2,
 });
 
 if (!result.ok) {
