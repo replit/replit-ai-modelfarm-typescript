@@ -18,6 +18,8 @@ The library implements an API for text completion, chat completion, and
 generating embeddings. It supports streaming so that you can provide your users
 with the best user experience.
 
+The library is available on NPM as `@replit/ai`.
+
 You can check out the [API reference](https://ai-docs-typescript.replit.app/ai.html)
 
-[Here is a simple command line chat demo using this library](https://replit.com/@replitfaris/replitai-demo)
+[Here is a simple command line chat demo using this library](https://replit.com/@masfrost/replitai-demo)
