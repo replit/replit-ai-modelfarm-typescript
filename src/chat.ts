@@ -80,7 +80,7 @@ export async function chatMultipleChoices(
 ): Promise<
   result.Result<{ choices: Array<{ message: ChatMessage }> }, RequestError>
 > {
-  const res = await chatImpl(options, '/chat');
+  const res = await chatImpl(options, '/v1beta/chat');
 
   if (!res.ok) {
     return res;
@@ -112,7 +112,7 @@ export async function chatStream(
 ): Promise<
   result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
 > {
-  const res = await chatImpl(options, '/chat_streaming');
+  const res = await chatImpl(options, '/v1beta/chat_streaming');
 
   if (!res.ok) {
     return res;
@@ -141,7 +141,7 @@ export async function chatStream(
 export async function chat(
   options: ChatOptions,
 ): Promise<result.Result<{ message: ChatMessage }, RequestError>> {
-  const res = await chatImpl(options, '/chat');
+  const res = await chatImpl(options, '/v1beta/chat');
 
   if (!res.ok) {
     return res;

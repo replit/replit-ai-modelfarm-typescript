@@ -62,7 +62,7 @@ export async function completeMultipleChoices(
 ): Promise<
   result.Result<{ choices: Array<{ completion: string }> }, RequestError>
 > {
-  const res = await completeImpl(options, '/completion');
+  const res = await completeImpl(options, '/v1beta/completion');
 
   if (!res.ok) {
     return res;
@@ -90,7 +90,7 @@ export async function completeMultipleChoices(
 export async function complete(
   options: CompleteOptions,
 ): Promise<result.Result<{ completion: string }, RequestError>> {
-  const res = await completeImpl(options, '/completion');
+  const res = await completeImpl(options, '/v1beta/completion');
 
   if (!res.ok) {
     return res;
@@ -130,7 +130,7 @@ export async function completeStream(
 ): Promise<
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
-  const res = await completeImpl(options, '/completion_streaming');
+  const res = await completeImpl(options, '/v1beta/completion_streaming');
 
   if (!res.ok) {
     return res;

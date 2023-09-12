@@ -54,7 +54,7 @@ export async function embed(
 ): Promise<result.Result<{ embedding: Embedding }, RequestError>> {
   const { model, content, ...otherOptions } = options;
   const res = await makeRequest(
-    '/embedding',
+    '/v1beta/embedding',
     {
       model: model ?? embeddingModels[0],
       parameters: {

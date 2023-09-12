@@ -13,14 +13,13 @@ export interface RequestError {
 
 const baseUrl =
   process.env.MODEL_FARM_URL ?? 'https://production-modelfarm.replit.com/';
-const version = '/v1beta';
 
 export default async function makeRequest<T, R>(
   urlPath: string,
   body: Record<string, unknown>,
   processJSON: (json: T) => R,
 ): Promise<result.Result<AsyncGenerator<R, void, void>, RequestError>> {
-  const url = new URL(version + urlPath, baseUrl);
+  const url = new URL(urlPath, baseUrl);
 
   const response = await fetch(url, {
     method: 'POST',
