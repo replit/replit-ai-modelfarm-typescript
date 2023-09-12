@@ -38,10 +38,10 @@ export interface ChatOptions {
   maxOutputTokens?: number;
 
   /**
-   * Allows extra model specific parameters. Consult with the documentation
+   * Allows extra model specific parameters. Consult with the documentation for which
+   * parameters are available for each model.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  extraParams?: Record<string, unknown>;
 }
 
 /**
@@ -190,30 +190,22 @@ async function chatImpl(
     RequestError
   >
 > {
-  const {
-    model,
-    messages,
-    temperature,
-    maxOutputTokens,
-    choicesCount,
-    ...otherOptions
-  } = options;
-
   return makeRequest(
     urlPath,
     {
-      model: model,
+      model: options.model,
       parameters: {
-        ...otherOptions,
         prompts: [
           {
             context: '',
-            messages,
+            messages: options.messages,
           },
         ],
-        temperature,
-        maxOutputTokens,
-        candidateCount: 'choicesCount' in options ? choicesCount : undefined,
+        temperature: options.temperature,
+        maxOutputTokens: options.maxOutputTokens,
+        candidateCount:
+          'choicesCount' in options ? options.choicesCount : undefined,
+        ...options.extraParams,
       },
     },
     (json: Response): { choices: Array<{ message: ChatMessage }> } => {

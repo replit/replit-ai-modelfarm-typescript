@@ -21,6 +21,7 @@ export default async function makeRequest<T, R>(
   processJSON: (json: T) => R,
 ): Promise<result.Result<AsyncGenerator<R, void, void>, RequestError>> {
   const url = new URL(version + urlPath, baseUrl);
+
   const response = await fetch(url, {
     method: 'POST',
     headers: {

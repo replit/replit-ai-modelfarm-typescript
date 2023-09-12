@@ -26,7 +26,9 @@ test('non streaming chat with extra parameters', async () => {
     messages: [{ content: 'What is the meaning of life? ', author: 'user' }],
     temperature: 0.0,
     maxOutputTokens: 1024,
-    stopSequences: ['life'],
+    extraParams: {
+      stopSequences: ['life'],
+    },
   });
 
   expect(result.error).toBeFalsy();

@@ -35,11 +35,12 @@ export interface CompleteOptions {
    * Defaults to 1024
    */
   maxOutputTokens?: number;
+
   /**
-   * Allows extra model specific parameters. Consult with the documentation
+   * Allows extra model specific parameters. Consult with the documentation for which
+   * parameters are available for each model.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+  extraParams?: Record<string, unknown>;
 }
 
 export interface CompleteMultipleChoicesOptions extends CompleteOptions {
@@ -169,27 +170,17 @@ async function completeImpl(
     RequestError
   >
 > {
-  const {
-    model,
-    prompt,
-    temperature,
-    maxOutputTokens,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    choicesCount,
-    ...otherOptions
-  } = options;
-
   return makeRequest(
     urlPath,
     {
-      model: model,
+      model: options.model,
       parameters: {
-        ...otherOptions,
-        prompts: [prompt],
-        temperature: temperature,
-        maxOutputTokens: maxOutputTokens,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        candidateCount: 'choicesCount' in options ? choicesCount : undefined,
+        prompts: [options.prompt],
+        temperature: options.temperature,
+        maxOutputTokens: options.maxOutputTokens,
+        candidateCount:
+          'choicesCount' in options ? options.choicesCount : undefined,
+        ...options.extraParams,
       },
     },
     (json: Response): { choices: Array<{ completion: string }> } => {

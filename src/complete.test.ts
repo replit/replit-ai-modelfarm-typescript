@@ -22,7 +22,9 @@ test('non streaming completion with extra parameters', async () => {
     prompt: 'Complete this sequence up to 10: 1, 2, 3, 4, 5',
     temperature: 0.5,
     maxOutputTokens: 128,
-    stopSequences: ['7', '7,'],
+    extraParams: {
+      stopSequences: ['7', '7,'],
+    },
   });
 
   expect(result.error).toBeFalsy();
