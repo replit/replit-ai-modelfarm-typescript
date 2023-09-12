@@ -34,14 +34,10 @@ test('non streaming chat with extra parameters', async () => {
   expect(result.error).toBeFalsy();
   expect(result.value).toMatchObject({
     message: {
-      content: expect.any(String),
+      content: expect.not.stringContaining('life'),
       author: expect.any(String),
     },
   });
-
-  // Check if the message content "life"
-  const messageContent = result.value.message.content;
-  expect(messageContent.includes('life')).toBeFalsy();
 });
 
 test('streaming chat', async () => {
