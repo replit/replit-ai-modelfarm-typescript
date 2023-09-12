@@ -153,8 +153,6 @@ export async function chat(
   return result.Ok(choice);
 }
 
-
-
 function getRequestOptions(
   options: ChatOptions | ChatMultipleChoicesOptions,
 ): Record<string, unknown> {

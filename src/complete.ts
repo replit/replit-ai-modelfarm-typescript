@@ -134,8 +134,6 @@ export async function completeStream(
   );
 }
 
-
-
 function getRequestOptions(
   options: CompleteOptions | CompleteMultipleChoicesOptions,
 ): Record<string, unknown> {
@@ -151,7 +149,6 @@ function getRequestOptions(
     },
   };
 }
-
 
 function processJSON(json: RawAPIResponse): {
   choices: Array<{ completion: string }>;

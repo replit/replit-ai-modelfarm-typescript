@@ -49,11 +49,9 @@ export async function doFetch(
   }
 
   return result.Ok(
-    response as Response & { body: NonNullable<Response['body']>; }
+    response as Response & { body: NonNullable<Response['body']> },
   );
 }
-
-
 
 export async function makeStreamingRequest<T, R>(
   urlPath: string,
