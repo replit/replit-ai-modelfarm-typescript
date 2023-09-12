@@ -16,9 +16,10 @@ export interface EmbedOptions {
    */
   model: EmbedModel;
   /**
-   * The content to embed
+   * The strings to embed, the returned embedding will correspond to the order
+   * of the passed string
    */
-  content: string;
+  content: Array<string>;
 
   /**
    * Allows extra model specific parameters. Consult with the documentation
@@ -52,29 +53,21 @@ interface Response {
  */
 export async function embed(
   options: EmbedOptions,
-): Promise<result.Result<{ embedding: Embedding }, RequestError>> {
+): Promise<result.Result<{ embeddings: Array<Embedding> }, RequestError>> {
   return makeSimpleRequest(
     '/v1beta/embedding',
     {
       model: options.model,
       parameters: {
-        content: [{ content: options.content }],
+        content: options.content.map((content) => ({ content })),
         ...options.extraParams,
       },
     },
-    (json: Response): { embedding: Embedding } => {
-      const embedding = json.embeddings[0];
-
-      if (!embedding) {
-        throw new Error('Expected embedding');
-      }
-
-      return {
-        embedding: {
-          values: embedding.values,
-          truncated: embedding.truncated,
-        },
-      };
-    },
+    (json: Response): { embeddings: Array<Embedding> } => ({
+      embeddings: json.embeddings.map((embedding) => ({
+        values: embedding.values,
+        truncated: embedding.truncated,
+      })),
+    }),
   );
 }
