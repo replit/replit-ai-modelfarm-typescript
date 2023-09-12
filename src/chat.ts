@@ -1,7 +1,9 @@
-import all from 'it-all';
 import * as result from './result';
-import makeRequest, { RequestError } from './request';
-import { pipe } from 'it-pipe';
+import {
+  makeStreamingRequest,
+  makeSimpleRequest,
+  RequestError,
+} from './request';
 
 /**
  * Available models for chat completion
@@ -77,25 +79,20 @@ export async function chatMultipleChoices(
 ): Promise<
   result.Result<{ choices: Array<{ message: ChatMessage }> }, RequestError>
 > {
-  const res = await chatImpl(options, '/v1beta/chat');
+  return makeSimpleRequest(
+    '/v1beta/chat',
+    getRequestOptions(options),
+    processJSON,
+  );
+}
 
-  if (!res.ok) {
-    return res;
-  }
-
-  const responses = await all(res.value);
-
-  if (responses.length > 1) {
-    throw new Error('Got multiple responses from non-streaming endpoint');
-  }
-
-  const response = responses[0];
-
-  if (!response) {
-    throw new Error('Expected at least one response');
-  }
-
-  return result.Ok(response);
+// non exauhstive
+interface RawAPIResponse {
+  responses: Array<{
+    candidates: Array<{
+      message: ChatMessage;
+    }>;
+  }>;
 }
 
 /**
@@ -109,25 +106,20 @@ export async function chatStream(
 ): Promise<
   result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
 > {
-  const res = await chatImpl(options, '/v1beta/chat_streaming');
+  return makeStreamingRequest(
+    '/v1beta/chat_streaming',
+    getRequestOptions(options),
+    (json: RawAPIResponse) => {
+      const { choices } = processJSON(json);
 
-  if (!res.ok) {
-    return res;
-  }
+      const choice = choices[0];
 
-  return result.Ok(
-    pipe(res.value, async function* (source) {
-      for await (const v of source) {
-        const choice = v.choices[0];
-        if (!choice) {
-          throw new Error('Expected at least one choice');
-        }
-
-        yield choice;
+      if (!choice) {
+        throw new Error('Expected at least one choice');
       }
 
-      return;
-    }),
+      return choice;
+    },
   );
 }
 
@@ -138,29 +130,21 @@ export async function chatStream(
 export async function chat(
   options: ChatOptions,
 ): Promise<result.Result<{ message: ChatMessage }, RequestError>> {
-  const res = await chatImpl(options, '/v1beta/chat');
+  const res = await makeSimpleRequest(
+    '/v1beta/chat',
+    getRequestOptions(options),
+    processJSON,
+  );
 
   if (!res.ok) {
     return res;
   }
 
-  const responses = await all(res.value);
-
-  if (responses.length > 1) {
-    throw new Error('Got multiple responses from non-streaming endpoint');
-  }
-
-  const response = responses[0];
-
-  if (!response) {
-    throw new Error('Expected at least one response');
-  }
-
-  if (response.choices.length > 1) {
+  if (res.value.choices.length > 1) {
     throw new Error('Got multiple choices without choicesCount');
   }
 
-  const choice = response.choices[0];
+  const choice = res.value.choices[0];
 
   if (!choice) {
     throw new Error('Expected at least one choice');
@@ -169,55 +153,40 @@ export async function chat(
   return result.Ok(choice);
 }
 
-// non exauhstive
-interface Response {
-  responses: Array<{
-    candidates: Array<{
-      message: ChatMessage;
-    }>;
-  }>;
+function getRequestOptions(
+  options: ChatOptions | ChatMultipleChoicesOptions,
+): Record<string, unknown> {
+  return {
+    model: options.model,
+    parameters: {
+      prompts: [
+        {
+          context: '',
+          messages: options.messages,
+        },
+      ],
+      temperature: options.temperature,
+      maxOutputTokens: options.maxOutputTokens,
+      candidateCount:
+        'choicesCount' in options ? options.choicesCount : undefined,
+      ...options.extraParams,
+    },
+  };
 }
 
-async function chatImpl(
-  options: ChatOptions | ChatMultipleChoicesOptions,
-  urlPath: string,
-): Promise<
-  result.Result<
-    AsyncGenerator<{ choices: Array<{ message: ChatMessage }> }>,
-    RequestError
-  >
-> {
-  return makeRequest(
-    urlPath,
-    {
-      model: options.model,
-      parameters: {
-        prompts: [
-          {
-            context: '',
-            messages: options.messages,
-          },
-        ],
-        temperature: options.temperature,
-        maxOutputTokens: options.maxOutputTokens,
-        candidateCount:
-          'choicesCount' in options ? options.choicesCount : undefined,
-        ...options.extraParams,
-      },
-    },
-    (json: Response): { choices: Array<{ message: ChatMessage }> } => {
-      if (!json.responses[0]?.candidates[0]?.message) {
-        throw new Error('Expected at least one message');
-      }
+function processJSON(json: RawAPIResponse): {
+  choices: Array<{ message: ChatMessage }>;
+} {
+  if (!json.responses[0]?.candidates[0]?.message) {
+    throw new Error('Expected at least one message');
+  }
 
-      return {
-        choices: json.responses[0].candidates.map(({ message }) => ({
-          message: {
-            content: message.content,
-            author: message.author,
-          },
-        })),
-      };
-    },
-  );
+  return {
+    choices: json.responses[0].candidates.map(({ message }) => ({
+      message: {
+        content: message.content,
+        author: message.author,
+      },
+    })),
+  };
 }
