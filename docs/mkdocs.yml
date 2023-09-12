@@ -44,14 +44,17 @@ not_in_nav: |
   ai.chatoptions.model.md
   ai.chatoptions.temperature.md
   ai.chatoptions.maxoutputtokens.md
+  ai.chatoptions.extraparams.md
   ai.chatmultiplechoicesoptions.choicescount.md
   ai.completeoptions.model.md
   ai.completeoptions.prompt.md
   ai.completeoptions.temperature.md
   ai.completeoptions.maxoutputtokens.md
+  ai.completeoptions.extraparams.md
   ai.completemultiplechoicesoptions.choicescount.md
   ai.embedoptions.content.md
   ai.embedoptions.model.md
+  ai.embedoptions.extraparams.md
   ai.embedding.truncated.md
   ai.embedding.values.md
   ai.requesterror.message.md
