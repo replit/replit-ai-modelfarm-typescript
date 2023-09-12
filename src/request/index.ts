@@ -12,7 +12,7 @@ export interface RequestError {
 }
 
 const baseUrl =
-  process.env.MODEL_FARM_URL ?? 'https://production-modelfarm.replit.com/';
+  process.env.MODEL_FARM_URL ?? 'https://production-modelfarm.replit.com/v1beta/';
 
 export default async function makeRequest<T, R>(
   urlPath: string,
