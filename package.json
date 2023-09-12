@@ -21,7 +21,7 @@
     "clean": "rm -rf dist docs/generated",
     "build": "tsup src/index.ts  --sourcemap --dts --platform node --format esm,cjs",
     "build:docs": "./docs/build.sh",
-    "prepublishOnly": "npm run checkall && npm run test && npm run build && npm run test:build"
+    "prepublishOnly": "npm run allstatic && npm run test && npm run build && npm run test:build"
   },
   "exports": {
     "./package.json": "./package.json",
