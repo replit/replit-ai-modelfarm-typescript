@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';

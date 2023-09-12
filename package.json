@@ -17,7 +17,7 @@
     "format:fix": "prettier src/* --write",
     "fix": "npm run format:fix && npm run lint:fix",
     "typecheck": "tsc --noEmit",
-    "checkall": "npm run typecheck && npm run lint && npm run format",
+    "allstatic": "npm run typecheck && npm run lint && npm run format",
     "clean": "rm -rf dist docs/generated",
     "build": "tsup src/index.ts  --sourcemap --dts --platform node --format esm,cjs",
     "build:docs": "./docs/build.sh",
