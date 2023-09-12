@@ -37,7 +37,9 @@ export interface ChatOptions {
    */
   maxOutputTokens?: number;
 
-  // Allows extra model specific parameters.
+  /**
+   * Allows extra model specific parameters. Consult with the documentation
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
@@ -117,7 +119,7 @@ export async function chatStream(
   }
 
   return result.Ok(
-    pipe(res.value, async function* (source) {
+    pipe(res.value, async function (source) {
       for await (const v of source) {
         const choice = v.choices[0];
         if (!choice) {

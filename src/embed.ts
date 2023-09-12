@@ -18,7 +18,9 @@ export interface EmbedOptions {
   model?: EmbedModel;
   content: string;
 
-  // Allows extra model specific parameters.
+  /**
+   * Allows extra model specific parameters. Consult with the documentation
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }

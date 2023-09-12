@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';
@@ -36,9 +35,9 @@ export interface CompleteOptions {
    * Defaults to 1024
    */
   maxOutputTokens?: number;
-  9;
-
-  // Allows extra model specific parameters.
+  /**
+   * Allows extra model specific parameters. Consult with the documentation
+   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
@@ -137,7 +136,7 @@ export async function completeStream(
   }
 
   return result.Ok(
-    pipe(res.value, async function* (source) {
+    pipe(res.value, async function (source) {
       for await (const v of source) {
         const choice = v.choices[0];
         if (!choice) {
@@ -170,12 +169,12 @@ async function completeImpl(
     RequestError
   >
 > {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const {
     model,
     prompt,
     temperature,
     maxOutputTokens,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     choicesCount,
     ...otherOptions
   } = options;
@@ -189,6 +188,7 @@ async function completeImpl(
         prompts: [prompt],
         temperature: temperature,
         maxOutputTokens: maxOutputTokens,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         candidateCount: 'choicesCount' in options ? choicesCount : undefined,
       },
     },
