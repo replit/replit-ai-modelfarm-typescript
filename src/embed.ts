@@ -16,9 +16,10 @@ export interface EmbedOptions {
    */
   model: EmbedModel;
   /**
-   * The content to embed
+   * The strings to embed, the returned embedding will correspond to the order
+   * of the passed string
    */
-  content: string;
+  content: Array<string>;
 
   /**
    * Allows extra model specific parameters. Consult with the documentation
@@ -58,7 +59,7 @@ export async function embed(
     {
       model: options.model,
       parameters: {
-        content: [{ content: options.content }],
+        content: options.content.map((content) => ({ content })),
         ...options.extraParams,
       },
     },
