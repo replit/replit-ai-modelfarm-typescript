@@ -20,6 +20,30 @@ test('non streaming chat', async () => {
   });
 });
 
+test('non streaming chat with extra parameters', async () => {
+  const result = await replitai.chat({
+    model: 'chat-bison',
+    messages: [{ content: 'What is the meaning of life? ', author: 'user' }],
+    temperature: 0.0,
+    maxOutputTokens: 1024,
+    extraParams: {
+      stopSequences: ['life'],
+    },
+  });
+
+  expect(result.error).toBeFalsy();
+  expect(result.value).toMatchObject({
+    message: {
+      content: expect.any(String),
+      author: expect.any(String),
+    },
+  });
+
+  // Check if the message content "life"
+  const messageContent = result.value.message.content;
+  expect(messageContent.includes('life')).toBeFalsy();
+});
+
 test('streaming chat', async () => {
   const result = await replitai.chatStream({
     model: 'chat-bison',

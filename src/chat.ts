@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 import all from 'it-all';
 import * as result from './result';
 import makeRequest, { RequestError } from './request';
@@ -33,6 +34,12 @@ export interface ChatOptions {
    * The absolute maximum value is limited by model's context size.
    */
   maxOutputTokens?: number;
+
+  /**
+   * Allows extra model specific parameters. Consult with the documentation for which
+   * parameters are available for each model.
+   */
+  extraParams?: Record<string, unknown>;
 }
 
 /**
@@ -71,7 +78,7 @@ export async function chatMultipleChoices(
 ): Promise<
   result.Result<{ choices: Array<{ message: ChatMessage }> }, RequestError>
 > {
-  const res = await chatImpl(options, '/chat');
+  const res = await chatImpl(options, '/v1beta/chat');
 
   if (!res.ok) {
     return res;
@@ -103,7 +110,7 @@ export async function chatStream(
 ): Promise<
   result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
 > {
-  const res = await chatImpl(options, '/chat_streaming');
+  const res = await chatImpl(options, '/v1beta/chat_streaming');
 
   if (!res.ok) {
     return res;
@@ -132,7 +139,7 @@ export async function chatStream(
 export async function chat(
   options: ChatOptions,
 ): Promise<result.Result<{ message: ChatMessage }, RequestError>> {
-  const res = await chatImpl(options, '/chat');
+  const res = await chatImpl(options, '/v1beta/chat');
 
   if (!res.ok) {
     return res;
@@ -196,6 +203,7 @@ async function chatImpl(
         maxOutputTokens: options.maxOutputTokens,
         candidateCount:
           'choicesCount' in options ? options.choicesCount : undefined,
+        ...options.extraParams,
       },
     },
     (json: Response): { choices: Array<{ message: ChatMessage }> } => {
