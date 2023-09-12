@@ -53,7 +53,7 @@ interface Response {
  */
 export async function embed(
   options: EmbedOptions,
-): Promise<result.Result<{ embedding: Embedding }, RequestError>> {
+): Promise<result.Result<{ embeddings: Array<Embedding> }, RequestError>> {
   return makeSimpleRequest(
     '/v1beta/embedding',
     {
@@ -63,19 +63,11 @@ export async function embed(
         ...options.extraParams,
       },
     },
-    (json: Response): { embedding: Embedding } => {
-      const embedding = json.embeddings[0];
-
-      if (!embedding) {
-        throw new Error('Expected embedding');
-      }
-
-      return {
-        embedding: {
-          values: embedding.values,
-          truncated: embedding.truncated,
-        },
-      };
-    },
+    (json: Response): { embeddings: Array<Embedding> } => ({
+      embeddings: json.embeddings.map((embedding) => ({
+        values: embedding.values,
+        truncated: embedding.truncated,
+      })),
+    }),
   );
 }
