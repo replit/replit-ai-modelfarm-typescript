@@ -2,7 +2,7 @@ import { pipe } from 'it-pipe';
 import streamToIterator from 'browser-readablestream-to-it';
 import IncrementalJSONParser from './incrementalJSONParser';
 
-export default function responseBodyToIterator<T, R>(
+export default function handleStreamingResponseBody<T, R>(
   responseBody: ReadableStream<Uint8Array>,
   processJSON: (json: T) => R,
 ): AsyncGenerator<R> {

@@ -1,7 +1,9 @@
-import all from 'it-all';
 import * as result from './result';
-import makeRequest, { RequestError } from './request';
-import { pipe } from 'it-pipe';
+import {
+  RequestError,
+  makeSimpleRequest,
+  makeStreamingRequest,
+} from './request';
 
 /**
  * Available models for text completion
@@ -51,6 +53,15 @@ export interface CompleteMultipleChoicesOptions extends CompleteOptions {
   choicesCount: number;
 }
 
+// non exauhstive
+interface RawAPIResponse {
+  responses: Array<{
+    choices: Array<{
+      content: string;
+    }>;
+  }>;
+}
+
 /**
  * Gets multiple completions for a piece of text.
  * @public
@@ -60,25 +71,11 @@ export async function completeMultipleChoices(
 ): Promise<
   result.Result<{ choices: Array<{ completion: string }> }, RequestError>
 > {
-  const res = await completeImpl(options, '/v1beta/completion');
-
-  if (!res.ok) {
-    return res;
-  }
-
-  const responses = await all(res.value);
-
-  if (responses.length > 1) {
-    throw new Error('Got multiple responses from non-streaming endpoint');
-  }
-
-  const response = responses[0];
-
-  if (!response) {
-    throw new Error('Expected at least one response');
-  }
-
-  return result.Ok(response);
+  return makeSimpleRequest(
+    '/v1beta/completion',
+    getRequestOptions(options),
+    processJSON,
+  );
 }
 
 /**
@@ -88,29 +85,21 @@ export async function completeMultipleChoices(
 export async function complete(
   options: CompleteOptions,
 ): Promise<result.Result<{ completion: string }, RequestError>> {
-  const res = await completeImpl(options, '/v1beta/completion');
+  const res = await makeSimpleRequest(
+    '/v1beta/completion',
+    getRequestOptions(options),
+    processJSON,
+  );
 
   if (!res.ok) {
     return res;
   }
 
-  const responses = await all(res.value);
-
-  if (responses.length > 1) {
-    throw new Error('Got multiple responses from non-streaming endpoint');
-  }
-
-  const response = responses[0];
-
-  if (!response) {
-    throw new Error('Expected at least one response');
-  }
-
-  if (response.choices.length > 1) {
+  if (res.value.choices.length > 1) {
     throw new Error('Got multiple choices without choicesCount');
   }
 
-  const choice = response.choices[0];
+  const choice = res.value.choices[0];
 
   if (!choice) {
     throw new Error('Expected at least one choice');
@@ -128,69 +117,52 @@ export async function completeStream(
 ): Promise<
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
-  const res = await completeImpl(options, '/v1beta/completion_streaming');
+  return makeStreamingRequest(
+    '/v1beta/completion_streaming',
+    getRequestOptions(options),
+    (json: RawAPIResponse) => {
+      const { choices } = processJSON(json);
 
-  if (!res.ok) {
-    return res;
+      const choice = choices[0];
+
+      if (!choice) {
+        throw new Error('Expected at least one choice');
+      }
+
+      return choice;
+    },
+  );
+}
+
+
+
+function getRequestOptions(
+  options: CompleteOptions | CompleteMultipleChoicesOptions,
+): Record<string, unknown> {
+  return {
+    model: options.model,
+    parameters: {
+      prompts: [options.prompt],
+      temperature: options.temperature,
+      maxOutputTokens: options.maxOutputTokens,
+      candidateCount:
+        'choicesCount' in options ? options.choicesCount : undefined,
+      ...options.extraParams,
+    },
+  };
+}
+
+
+function processJSON(json: RawAPIResponse): {
+  choices: Array<{ completion: string }>;
+} {
+  if (!json.responses[0]?.choices[0]?.content) {
+    throw new Error('Expected at least one message');
   }
 
-  return result.Ok(
-    pipe(res.value, async function* (source) {
-      for await (const v of source) {
-        const choice = v.choices[0];
-        if (!choice) {
-          throw new Error('Expected at least one choice');
-        }
-
-        yield choice;
-      }
-
-      return;
-    }),
-  );
-}
-
-// non exauhstive
-interface Response {
-  responses: Array<{
-    choices: Array<{
-      content: string;
-    }>;
-  }>;
-}
-
-async function completeImpl(
-  options: CompleteOptions | CompleteMultipleChoicesOptions,
-  urlPath: string,
-): Promise<
-  result.Result<
-    AsyncGenerator<{ choices: Array<{ completion: string }> }>,
-    RequestError
-  >
-> {
-  return makeRequest(
-    urlPath,
-    {
-      model: options.model,
-      parameters: {
-        prompts: [options.prompt],
-        temperature: options.temperature,
-        maxOutputTokens: options.maxOutputTokens,
-        candidateCount:
-          'choicesCount' in options ? options.choicesCount : undefined,
-        ...options.extraParams,
-      },
-    },
-    (json: Response): { choices: Array<{ completion: string }> } => {
-      if (!json.responses[0]?.choices[0]?.content) {
-        throw new Error('Expected at least one message');
-      }
-
-      return {
-        choices: json.responses[0].choices.map(({ content }) => ({
-          completion: content,
-        })),
-      };
-    },
-  );
+  return {
+    choices: json.responses[0].choices.map(({ content }) => ({
+      completion: content,
+    })),
+  };
 }
