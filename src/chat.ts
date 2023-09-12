@@ -119,7 +119,7 @@ export async function chatStream(
   }
 
   return result.Ok(
-    pipe(res.value, async function (source) {
+    pipe(res.value, async function* (source) {
       for await (const v of source) {
         const choice = v.choices[0];
         if (!choice) {

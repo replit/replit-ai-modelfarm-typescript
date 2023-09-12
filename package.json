@@ -1,6 +1,6 @@
 {
   "name": "@replit/ai",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A library for building AI applications in JavaScript and TypeScript.",
   "homepage": "https://ai-docs-typescript.replit.app/",
   "repository": "https://github.com/replit/replit-ai-typescript",
