@@ -11,13 +11,13 @@ import {
   complete,
   completeMultipleChoices,
   completeStream,
-  CompleteModel,
-  CompleteOptions,
-  CompleteMultipleChoicesOptions,
+  CompletionModel,
+  CompletionOptions,
+  CompletionMultipleChoicesOptions,
 } from './complete';
 import { Result, OkResult, ErrResult } from './result';
 import { RequestError } from './request';
-import { embed, Embedding, EmbedModel, EmbedOptions } from './embed';
+import { embed, Embedding, EmbeddingModel, EmbeddingOptions } from './embed';
 
 export {
   chat,
@@ -34,13 +34,13 @@ export type {
   ErrResult,
   ChatOptions,
   ChatMultipleChoicesOptions,
-  CompleteOptions,
-  CompleteMultipleChoicesOptions,
+  CompletionOptions,
+  CompletionMultipleChoicesOptions,
   ChatMessage,
-  CompleteModel,
+  CompletionModel,
   ChatModel,
   RequestError,
   Embedding,
-  EmbedModel,
-  EmbedOptions,
+  EmbeddingModel,
+  EmbeddingOptions,
 };

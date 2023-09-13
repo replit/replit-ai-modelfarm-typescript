@@ -9,17 +9,17 @@ import {
  * Available models for text completion
  * @public
  */
-export type CompleteModel = 'text-bison';
+export type CompletionModel = 'text-bison';
 
 /**
  * Options for completion request
  * @public
  */
-export interface CompleteOptions {
+export interface CompletionOptions {
   /**
    * Specifies the model to use
    */
-  model: CompleteModel;
+  model: CompletionModel;
   /**
    * The string/text to complete
    */
@@ -43,7 +43,7 @@ export interface CompleteOptions {
   extraParams?: Record<string, unknown>;
 }
 
-export interface CompleteMultipleChoicesOptions extends CompleteOptions {
+export interface CompletionMultipleChoicesOptions extends CompletionOptions {
   /**
    * Number of completions to generate. Minimum 1, the maximum
    * depends on the model, the returned choices will be automatically
@@ -67,7 +67,7 @@ interface RawAPIResponse {
  * @public
  */
 export async function completeMultipleChoices(
-  options: CompleteMultipleChoicesOptions,
+  options: CompletionMultipleChoicesOptions,
 ): Promise<
   result.Result<{ choices: Array<{ completion: string }> }, RequestError>
 > {
@@ -83,7 +83,7 @@ export async function completeMultipleChoices(
  * @public
  */
 export async function complete(
-  options: CompleteOptions,
+  options: CompletionOptions,
 ): Promise<result.Result<{ completion: string }, RequestError>> {
   const res = await makeSimpleRequest(
     '/v1beta/completion',
@@ -113,7 +113,7 @@ export async function complete(
  * @public
  */
 export async function completeStream(
-  options: CompleteOptions,
+  options: CompletionOptions,
 ): Promise<
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
@@ -135,7 +135,7 @@ export async function completeStream(
 }
 
 function getRequestOptions(
-  options: CompleteOptions | CompleteMultipleChoicesOptions,
+  options: CompletionOptions | CompletionMultipleChoicesOptions,
 ): Record<string, unknown> {
   return {
     model: options.model,

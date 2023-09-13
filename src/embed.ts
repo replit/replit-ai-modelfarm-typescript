@@ -5,16 +5,16 @@ import { RequestError, makeSimpleRequest } from './request';
  * Available models for text embedding
  * @public
  */
-export type EmbedModel = 'textembedding-gecko';
+export type EmbeddingModel = 'textembedding-gecko';
 
 /**
  * Options for embedding request
  */
-export interface EmbedOptions {
+export interface EmbeddingOptions {
   /**
    * The model to embed with
    */
-  model: EmbedModel;
+  model: EmbeddingModel;
   /**
    * The strings to embed, the returned embedding will correspond to the order
    * of the passed string
@@ -52,7 +52,7 @@ interface Response {
  * @public
  */
 export async function embed(
-  options: EmbedOptions,
+  options: EmbeddingOptions,
 ): Promise<result.Result<{ embeddings: Array<Embedding> }, RequestError>> {
   return makeSimpleRequest(
     '/v1beta/embedding',
