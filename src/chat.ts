@@ -21,6 +21,12 @@ export interface ChatOptions {
    */
   model: ChatModel;
   /**
+   * This can be instructions for the model on how it should respond
+   * or information it uses to generate a response. This can also be
+   * used to restrict the model to a specific topic.
+   */
+  context?: string;
+  /**
    * Previous messages in the conversation
    */
   messages: Array<ChatMessage>;
@@ -161,7 +167,7 @@ function getRequestOptions(
     parameters: {
       prompts: [
         {
-          context: '',
+          context: options.context,
           messages: options.messages,
         },
       ],
