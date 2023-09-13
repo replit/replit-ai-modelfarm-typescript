@@ -167,7 +167,7 @@ function getRequestOptions(
     parameters: {
       prompts: [
         {
-          context: options.context,
+          context: options.context ?? '',
           messages: options.messages,
         },
       ],
