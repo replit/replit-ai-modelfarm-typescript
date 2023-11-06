@@ -6,9 +6,9 @@ import * as replitai from './index';
 test('non streaming chat', async () => {
   const result = await replitai.chat({
     model: 'chat-bison',
-    messages: [{ content: 'what is the meaning of life', author: 'user' }],
+    messages: [{ content: 'what is the meaning of life', role: 'user' }],
     temperature: 0.5,
-    maxOutputTokens: 128,
+    max_tokens: 128,
   });
 
   expect(result.error).toBeFalsy();
@@ -23,11 +23,11 @@ test('non streaming chat', async () => {
 test('non streaming chat with extra parameters', async () => {
   const result = await replitai.chat({
     model: 'chat-bison',
-    messages: [{ content: 'What is the meaning of life? ', author: 'user' }],
+    messages: [{ content: 'What is the meaning of life? ', role: 'user' }],
     temperature: 0.0,
-    maxOutputTokens: 1024,
+    max_tokens: 1024,
     extraParams: {
-      stopSequences: ['life'],
+      stop: ['life'],
     },
   });
 
@@ -43,9 +43,9 @@ test('non streaming chat with extra parameters', async () => {
 test('streaming chat', async () => {
   const result = await replitai.chatStream({
     model: 'chat-bison',
-    messages: [{ content: 'what is the meaning of life', author: 'user' }],
+    messages: [{ content: 'what is the meaning of life', role: 'user' }],
     temperature: 0.5,
-    maxOutputTokens: 128,
+    max_tokens: 128,
   });
 
   expect(result.error).toBeFalsy();
@@ -65,10 +65,10 @@ test('streaming chat', async () => {
 test('chat with multiple choices', async () => {
   const result = await replitai.chatMultipleChoices({
     model: 'chat-bison',
-    messages: [{ content: 'what is the meaning of life', author: 'user' }],
+    messages: [{ content: 'what is the meaning of life', role: 'user' }],
     temperature: 1,
-    maxOutputTokens: 128,
-    choicesCount: 4,
+    max_tokens: 128,
+    n: 4,
   });
 
   expect(result.error).toBeFalsy();
