@@ -72,7 +72,7 @@ export async function completeMultipleChoices(
   result.Result<{ choices: Array<{ completion: string }> }, RequestError>
 > {
   return makeSimpleRequest(
-    '/v1beta/completion',
+    '/v1beta2/completion',
     getRequestOptions(options),
     processJSON,
   );
@@ -86,7 +86,7 @@ export async function complete(
   options: CompletionOptions,
 ): Promise<result.Result<{ completion: string }, RequestError>> {
   const res = await makeSimpleRequest(
-    '/v1beta/completion',
+    '/v1beta2/completion',
     getRequestOptions(options),
     processJSON,
   );
@@ -118,7 +118,7 @@ export async function completeStream(
   result.Result<AsyncGenerator<{ completion: string }>, RequestError>
 > {
   return makeStreamingRequest(
-    '/v1beta/completion_streaming',
+    '/v1beta2/completion_streaming',
     getRequestOptions(options),
     (json: RawAPIResponse) => {
       const { choices } = processJSON(json);

@@ -19,7 +19,7 @@ export interface EmbeddingOptions {
    * The strings to embed, the returned embedding will correspond to the order
    * of the passed string
    */
-  content: Array<string>;
+  input: Array<string>;
 
   /**
    * Allows extra model specific parameters. Consult with the documentation
@@ -33,18 +33,18 @@ export interface EmbeddingOptions {
  */
 export interface Embedding {
   /**
+   * The index of the input text
+   */
+  index: number;
+  /**
    * The embedding vectors corresponding to the words in the input text
    */
-  values: Array<number>;
-  /**
-   * Indicates if the input text was longer than max allowed tokens and truncated
-   */
-  truncated: boolean;
+  embedding: Array<number>;
 }
 
 // non exauhstive
 interface Response {
-  embeddings: Array<Embedding>;
+  data: Array<Embedding>;
 }
 
 /**
@@ -55,18 +55,18 @@ export async function embed(
   options: EmbeddingOptions,
 ): Promise<result.Result<{ embeddings: Array<Embedding> }, RequestError>> {
   return makeSimpleRequest(
-    '/v1beta/embedding',
+    '/v1beta2/embedding',
     {
       model: options.model,
       parameters: {
-        content: options.content.map((content) => ({ content })),
+        input: options.input,
         ...options.extraParams,
       },
     },
     (json: Response): { embeddings: Array<Embedding> } => ({
-      embeddings: json.embeddings.map((embedding) => ({
-        values: embedding.values,
-        truncated: embedding.truncated,
+      embeddings: json.data.map((embedding) => ({
+        index: embedding.index,
+        embedding: embedding.embedding,
       })),
     }),
   );

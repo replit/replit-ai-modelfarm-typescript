@@ -21,12 +21,6 @@ export interface ChatOptions {
    */
   model: ChatModel;
   /**
-   * This can be instructions for the model on how it should respond
-   * or information it uses to generate a response. This can also be
-   * used to restrict the model to a specific topic.
-   */
-  context?: string;
-  /**
    * Previous messages in the conversation
    */
   messages: Array<ChatMessage>;
@@ -40,7 +34,7 @@ export interface ChatOptions {
    * The maximum number of tokens generated in the chat completion.
    * The absolute maximum value is limited by model's context size.
    */
-  maxOutputTokens?: number;
+  max_tokens?: number;
 
   /**
    * Allows extra model specific parameters. Consult with the documentation for which
@@ -59,11 +53,11 @@ export interface ChatMessage {
    */
   content: string;
   /**
-   * The author of the message.
+   * The role of the message.
    * Typically the completion infers the author from examples and previous
    * messages provided in the options.
    */
-  author: string;
+  role: string;
 }
 
 export interface ChatMultipleChoicesOptions extends ChatOptions {
@@ -71,9 +65,9 @@ export interface ChatMultipleChoicesOptions extends ChatOptions {
    * Number of chat completions to generate. Minimum 1, the maximum
    * depends on the model, the returned choices will be automatically
    * adjusted to fit the model. You should not treat this as a guarantee,
-   * what you will get is a number of choices up to `choicesCount`.
+   * what you will get is a number of choices up to `n`.
    */
-  choicesCount: number;
+  n: number;
 }
 
 /**
@@ -83,22 +77,25 @@ export interface ChatMultipleChoicesOptions extends ChatOptions {
 export async function chatMultipleChoices(
   options: ChatMultipleChoicesOptions,
 ): Promise<
-  result.Result<{ choices: Array<{ message: ChatMessage }> }, RequestError>
+  result.Result<{ choices: Array<Choice> }, RequestError>
 > {
   return makeSimpleRequest(
-    '/v1beta/chat',
+    '/v1beta2/chat',
     getRequestOptions(options),
     processJSON,
   );
 }
 
+interface Choice {
+  index: number;
+  message?: ChatMessage;
+  delta?: ChatMessage;
+  finish_reason?: string;
+}
+
 // non exauhstive
 interface RawAPIResponse {
-  responses: Array<{
-    candidates: Array<{
-      message: ChatMessage;
-    }>;
-  }>;
+  choices: Array<Choice>;
 }
 
 /**
@@ -110,10 +107,10 @@ interface RawAPIResponse {
 export async function chatStream(
   options: ChatOptions,
 ): Promise<
-  result.Result<AsyncGenerator<{ message: ChatMessage }>, RequestError>
+  result.Result<AsyncGenerator<Choice>, RequestError>
 > {
   return makeStreamingRequest(
-    '/v1beta/chat_streaming',
+    '/v1beta2/chat_streaming',
     getRequestOptions(options),
     (json: RawAPIResponse) => {
       const { choices } = processJSON(json);
@@ -135,9 +132,9 @@ export async function chatStream(
  */
 export async function chat(
   options: ChatOptions,
-): Promise<result.Result<{ message: ChatMessage }, RequestError>> {
+): Promise<result.Result<Choice, RequestError>> {
   const res = await makeSimpleRequest(
-    '/v1beta/chat',
+    '/v1beta2/chat',
     getRequestOptions(options),
     processJSON,
   );
@@ -165,34 +162,27 @@ function getRequestOptions(
   return {
     model: options.model,
     parameters: {
-      prompts: [
-        {
-          context: options.context ?? '',
-          messages: options.messages,
-        },
-      ],
+      messages: options.messages,
       temperature: options.temperature,
-      maxOutputTokens: options.maxOutputTokens,
-      candidateCount:
-        'choicesCount' in options ? options.choicesCount : undefined,
+      max_tokens: options.max_tokens,
+      n: 'n' in options ? options.n : undefined,
       ...options.extraParams,
     },
   };
 }
 
 function processJSON(json: RawAPIResponse): {
-  choices: Array<{ message: ChatMessage }>;
+  choices: Array<Choice>;
 } {
-  if (!json.responses[0]?.candidates[0]?.message) {
+  if (!json.choices[0]?.message) {
     throw new Error('Expected at least one message');
   }
 
   return {
-    choices: json.responses[0].candidates.map(({ message }) => ({
-      message: {
-        content: message.content,
-        author: message.author,
-      },
+    choices: json.choices.map(({ index, message, delta }) => ({
+      index: index,
+      message,
+      delta,
     })),
   };
 }
