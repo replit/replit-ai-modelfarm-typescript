@@ -7,23 +7,18 @@ import {
   CompletionOptions,
   CompletionMultipleChoicesOptions,
 } from './complete';
-import { Result, OkResult, ErrResult } from './result';
 import { RequestError } from './request';
-import { embed, Embedding, EmbeddingModel, EmbeddingOptions } from './embed';
+import { EmbeddingModelResponse, EmbeddingOptions } from './embeddings';
 import { Modelfarm } from './client';
 
-export { Modelfarm, embed };
+export { Modelfarm };
 export type {
-  Result,
-  OkResult,
-  ErrResult,
   ChatCompletionResponse,
   ChatCompletionStreamChunkResponse,
   CompletionOptions,
   CompletionMultipleChoicesOptions,
   CompletionModel,
   RequestError,
-  Embedding,
-  EmbeddingModel,
   EmbeddingOptions,
+  EmbeddingModelResponse,
 };
