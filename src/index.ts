@@ -1,16 +1,8 @@
 import {
-  chat,
-  chatStream,
-  chatMultipleChoices,
-  ChatMultipleChoicesOptions,
-  ChatOptions,
-  ChatMessage,
-  ChatModel,
-} from './chat';
+  ChatCompletionResponse,
+  ChatCompletionStreamChunkResponse,
+} from './chat_completions';
 import {
-  complete,
-  completeMultipleChoices,
-  completeStream,
   CompletionModel,
   CompletionOptions,
   CompletionMultipleChoicesOptions,
@@ -18,27 +10,18 @@ import {
 import { Result, OkResult, ErrResult } from './result';
 import { RequestError } from './request';
 import { embed, Embedding, EmbeddingModel, EmbeddingOptions } from './embed';
+import { Modelfarm } from './client';
 
-export {
-  chat,
-  chatStream,
-  chatMultipleChoices,
-  complete,
-  completeStream,
-  completeMultipleChoices,
-  embed,
-};
+export { Modelfarm, embed };
 export type {
   Result,
   OkResult,
   ErrResult,
-  ChatOptions,
-  ChatMultipleChoicesOptions,
+  ChatCompletionResponse,
+  ChatCompletionStreamChunkResponse,
   CompletionOptions,
   CompletionMultipleChoicesOptions,
-  ChatMessage,
   CompletionModel,
-  ChatModel,
   RequestError,
   Embedding,
   EmbeddingModel,
