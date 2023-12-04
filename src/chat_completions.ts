@@ -145,7 +145,7 @@ interface ChatOptionParamsBase {
   max_tokens?: number;
 
   /**
-   * Number of completions to generate
+   * Wheter to stream the completions.
    */
   stream?: boolean;
 
