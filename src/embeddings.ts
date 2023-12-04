@@ -25,7 +25,7 @@ export class Embeddings {
   }
 }
 
-interface Embedding {
+export interface Embedding {
   object: string;
   embedding: Array<number>;
   index: number;

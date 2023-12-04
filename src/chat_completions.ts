@@ -51,38 +51,38 @@ export class Chat {
   }
 }
 
-interface FunctionCall {
+export interface FunctionCall {
   name: string;
   arguments: string;
 }
 
-interface ToolCall {
+export interface ToolCall {
   id: string;
   type: string;
   function: FunctionCall;
 }
 
-interface ChoiceMessage {
+export interface ChoiceMessage {
   content?: string;
   role?: string;
   tool_calls?: Array<ToolCall>;
 }
 
-interface BaseChoice {
+export interface BaseChoice {
   index: number;
   finish_reason?: string;
   metadata?: Record<string, unknown>;
 }
 
-interface Choice extends BaseChoice {
+export interface Choice extends BaseChoice {
   message: ChoiceMessage;
 }
 
-interface ChoiceStream extends BaseChoice {
+export interface ChoiceStream extends BaseChoice {
   delta: ChoiceMessage;
 }
 
-interface BaseChatCompletionResponse {
+export interface BaseChatCompletionResponse {
   id: string;
   choices: Array<BaseChoice>;
   model: string;
@@ -123,7 +123,7 @@ export interface ChatCompletionMessageRequestParam {
  * Options for chat request
  * @public
  */
-interface ChatOptionParamsBase {
+export interface ChatOptionParamsBase {
   /**
    * Specifies the model to use
    */
@@ -161,11 +161,11 @@ interface ChatOptionParamsBase {
   provider_extra_parameters?: Record<string, unknown>;
 }
 
-interface ChatOptionParamsStream extends ChatOptionParamsBase {
+export interface ChatOptionParamsStream extends ChatOptionParamsBase {
   stream: true;
 }
 
-interface ChatOptionParamsNonStream extends ChatOptionParamsBase {
+export interface ChatOptionParamsNonStream extends ChatOptionParamsBase {
   stream?: false;
 }
 

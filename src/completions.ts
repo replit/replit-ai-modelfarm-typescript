@@ -14,26 +14,23 @@ export class Completions {
    */
   async create(
     options: CompletionOptionsStream,
-  ): Promise<AsyncGenerator<CompletionModelResponse>>;
+  ): Promise<AsyncGenerator<CompletionResponse>>;
   async create(
     options: CompletionOptionsNonStream,
-  ): Promise<CompletionModelResponse>;
+  ): Promise<CompletionResponse>;
   async create(
     options: CompletionOptions,
-  ): Promise<
-    CompletionModelResponse | AsyncGenerator<CompletionModelResponse>
-  > {
+  ): Promise<CompletionResponse | AsyncGenerator<CompletionResponse>> {
     let res;
     if (options.stream) {
-      res = await makeStreamingRequest<CompletionModelResponse>(
+      res = await makeStreamingRequest<CompletionResponse>(
         'v1beta2/completions',
         { ...options },
       );
     } else {
-      res = await makeSimpleRequest<CompletionModelResponse>(
-        'v1beta2/completions',
-        { ...options },
-      );
+      res = await makeSimpleRequest<CompletionResponse>('v1beta2/completions', {
+        ...options,
+      });
     }
     if (res.ok) {
       return res.value;
@@ -50,7 +47,7 @@ export interface Choice {
   metadata?: Record<string, unknown>;
 }
 
-export interface CompletionModelResponse {
+export interface CompletionResponse {
   id: string;
   choices: Array<Choice>;
   model: string;

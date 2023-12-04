@@ -1,24 +1,26 @@
 import {
+  ChatOptionParamsStream,
+  ChatOptionParamsNonStream,
   ChatCompletionResponse,
   ChatCompletionStreamChunkResponse,
 } from './chat_completions';
 import {
-  CompletionModel,
-  CompletionOptions,
-  CompletionMultipleChoicesOptions,
-} from './complete';
-import { RequestError } from './request';
-import { EmbeddingModelResponse, EmbeddingOptions } from './embeddings';
+  CompletionOptionsStream,
+  CompletionOptionsNonStream,
+  CompletionResponse,
+} from './completions';
+import { EmbeddingOptions, EmbeddingModelResponse } from './embeddings';
 import { Modelfarm } from './client';
 
 export { Modelfarm };
 export type {
+  ChatOptionParamsStream,
+  ChatOptionParamsNonStream,
   ChatCompletionResponse,
   ChatCompletionStreamChunkResponse,
-  CompletionOptions,
-  CompletionMultipleChoicesOptions,
-  CompletionModel,
-  RequestError,
+  CompletionOptionsStream,
+  CompletionOptionsNonStream,
+  CompletionResponse,
   EmbeddingOptions,
   EmbeddingModelResponse,
 };
