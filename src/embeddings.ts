@@ -1,5 +1,4 @@
 import { Modelfarm } from './client';
-import { makeSimpleRequest } from './request';
 import { Usage, GoogleEmbeddingMetadata } from './structs';
 
 export class Embeddings {
@@ -14,7 +13,7 @@ export class Embeddings {
    * @public
    */
   async create(options: EmbeddingOptions): Promise<EmbeddingModelResponse> {
-    const res = await makeSimpleRequest<EmbeddingModelResponse>(
+    const res = await this._client.makeSimpleRequest<EmbeddingModelResponse>(
       'v1beta2/embeddings',
       { ...options },
     );

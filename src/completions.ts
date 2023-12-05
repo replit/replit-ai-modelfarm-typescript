@@ -1,5 +1,4 @@
 import { Modelfarm } from './client';
-import { makeStreamingRequest, makeSimpleRequest } from './request';
 import { Usage, GoogleMetadata } from './structs';
 
 export class Completions {
@@ -23,14 +22,15 @@ export class Completions {
   ): Promise<CompletionResponse | AsyncGenerator<CompletionResponse>> {
     let res;
     if (options.stream) {
-      res = await makeStreamingRequest<CompletionResponse>(
+      res = await this._client.makeStreamingRequest<CompletionResponse>(
         'v1beta2/completions',
         { ...options },
       );
     } else {
-      res = await makeSimpleRequest<CompletionResponse>('v1beta2/completions', {
-        ...options,
-      });
+      res = await this._client.makeSimpleRequest<CompletionResponse>(
+        'v1beta2/completions',
+        { ...options },
+      );
     }
     if (res.ok) {
       return res.value;

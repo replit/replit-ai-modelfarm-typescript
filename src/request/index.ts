@@ -1,6 +1,5 @@
-import * as result from '../result';
+import * as result from './result';
 import getToken from './getToken';
-import handleStreamingResponseBody from './handleStreamingResponseBody';
 
 /**
  * An object that represents an error with a request
@@ -11,10 +10,8 @@ export interface RequestError {
   statusCode: number;
 }
 
-export const baseUrl =
-  process.env.MODEL_FARM_URL ?? 'https://production-modelfarm.replit.com/';
-
 export async function doFetch(
+  baseUrl: string,
   urlPath: string,
   body: Record<string, unknown>,
 ): Promise<
@@ -51,34 +48,4 @@ export async function doFetch(
   return result.Ok(
     response as Response & { body: NonNullable<Response['body']> },
   );
-}
-
-export async function makeStreamingRequest<R>(
-  urlPath: string,
-  body: Record<string, unknown>,
-): Promise<result.Result<AsyncGenerator<R, void, void>, RequestError>> {
-  const res = await doFetch(urlPath, body);
-
-  if (!res.ok) {
-    return res;
-  }
-
-  const iterator = handleStreamingResponseBody<R>(res.value.body);
-
-  return result.Ok(iterator);
-}
-
-export async function makeSimpleRequest<R>(
-  urlPath: string,
-  body: Record<string, unknown>,
-): Promise<result.Result<R, RequestError>> {
-  const res = await doFetch(urlPath, body);
-
-  if (!res.ok) {
-    return res;
-  }
-
-  const json = (await res.value.json()) as R;
-
-  return result.Ok(json);
 }

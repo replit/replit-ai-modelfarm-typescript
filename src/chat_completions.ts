@@ -1,5 +1,4 @@
 import { Modelfarm } from './index';
-import { makeStreamingRequest, makeSimpleRequest } from './request';
 import { Usage, GoogleMetadata } from './structs';
 
 export class Completions {
@@ -26,12 +25,13 @@ export class Completions {
   > {
     let res;
     if (options.stream) {
-      res = await makeStreamingRequest<ChatCompletionStreamChunkResponse>(
-        'v1beta2/chat/completions',
-        { ...options },
-      );
+      res =
+        await this._client.makeStreamingRequest<ChatCompletionStreamChunkResponse>(
+          'v1beta2/chat/completions',
+          { ...options },
+        );
     } else {
-      res = await makeSimpleRequest<ChatCompletionResponse>(
+      res = await this._client.makeSimpleRequest<ChatCompletionResponse>(
         'v1beta2/chat/completions',
         { ...options },
       );
