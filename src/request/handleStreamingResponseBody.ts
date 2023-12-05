@@ -7,7 +7,7 @@ export default function handleStreamingResponseBody<R>(
 ): AsyncGenerator<R> {
   return pipe(
     streamToIterator(responseBody),
-    async function*(source) {
+    async function* (source) {
       const decoder = new TextDecoder('utf-8');
 
       for await (const v of source) {
@@ -16,7 +16,7 @@ export default function handleStreamingResponseBody<R>(
 
       return;
     },
-    async function*(source): AsyncGenerator<R> {
+    async function* (source): AsyncGenerator<R> {
       const parser = new IncrementalJSONParser();
       for await (const v of source) {
         const parserSource = parser.write(v);
