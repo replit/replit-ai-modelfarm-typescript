@@ -2,6 +2,6 @@
 
 A library for building AI applications in JavaScript and TypeScript.
 
-[Model farm general documentation](https://docs.replit.com/ai/model-farm/)
+[Model farm general documentation](https://docs.replit.com/model-farm/)
 
-[TypeScript library API reference](https://docs.replit.com//ai/model-farm/typescript/)
+[TypeScript library API reference](https://docs.replit.com/model-farm/typescript/)
