@@ -24,7 +24,7 @@ async function genReplIdentityToken(): Promise<string> {
 }
 
 async function getDeploymentToken(): Promise<string> {
-  const res = await fetch('http://localhost:1105/getIdentityToken', {
+  const res = await fetch('http://127.0.0.1:1105/getIdentityToken', {
     body: JSON.stringify({ audience: 'modelfarm@replit.com' }),
     headers: {
       'Content-Type': 'application/json',
