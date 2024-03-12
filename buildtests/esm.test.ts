@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
 import * as replitAiStarImport from "../dist";
-import { Modelfarm as ModelfarmImport } from "../dist";
+import { chat as replitChatImport } from "../dist";
 
 test("esm import test", async () => {
   expect(replitAiStarImport).toBeTruthy();
-  expect(replitAiStarImport.Modelfarm).toBeTruthy();
-  expect(ModelfarmImport).toBeTruthy();
+  expect(replitAiStarImport.chat).toBeTruthy();
+  expect(replitChatImport).toBeTruthy();
 });

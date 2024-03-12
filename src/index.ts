@@ -1,26 +1,10 @@
-import {
-  ChatOptionParamsStream,
-  ChatOptionParamsNonStream,
-  ChatCompletionResponse,
-  ChatCompletionStreamChunkResponse,
-} from './chat_completions';
-import {
-  CompletionOptionsStream,
-  CompletionOptionsNonStream,
-  CompletionResponse,
-} from './completions';
-import { EmbeddingOptions, EmbeddingModelResponse } from './embeddings';
-import { Modelfarm } from './client';
+export * as chat from './chat';
+export * from './chat/types';
 
-export { Modelfarm };
-export type {
-  ChatOptionParamsStream,
-  ChatOptionParamsNonStream,
-  ChatCompletionResponse,
-  ChatCompletionStreamChunkResponse,
-  CompletionOptionsStream,
-  CompletionOptionsNonStream,
-  CompletionResponse,
-  EmbeddingOptions,
-  EmbeddingModelResponse,
-};
+export * as completions from './completions';
+export * from './completions/types';
+
+export * as embeddings from './embeddings';
+export * from './embeddings/types';
+
+export * from './structs';

@@ -1,45 +1,6 @@
-import { Modelfarm } from './client';
-import { Usage, GoogleMetadata } from './structs';
+import type { GoogleMetadata, Usage } from '../structs';
 
-export class Completions {
-  _client: Modelfarm;
-  constructor(client: Modelfarm) {
-    this._client = client;
-  }
-
-  /**
-   * Gets the completion for a piece of text.
-   * @public
-   */
-  async create(
-    options: CompletionOptionsStream,
-  ): Promise<AsyncGenerator<CompletionResponse>>;
-  async create(
-    options: CompletionOptionsNonStream,
-  ): Promise<CompletionResponse>;
-  async create(
-    options: CompletionOptions,
-  ): Promise<CompletionResponse | AsyncGenerator<CompletionResponse>> {
-    let res;
-    if (options.stream) {
-      res = await this._client.makeStreamingRequest<CompletionResponse>(
-        'v1beta2/completions',
-        { ...options },
-      );
-    } else {
-      res = await this._client.makeSimpleRequest<CompletionResponse>(
-        'v1beta2/completions',
-        { ...options },
-      );
-    }
-    if (res.ok) {
-      return res.value;
-    }
-    throw new Error(res.error.message);
-  }
-}
-
-export interface Choice {
+export interface CompletionChoice {
   index: number;
   text: string;
   finish_reason: string;
@@ -49,7 +10,7 @@ export interface Choice {
 
 export interface CompletionResponse {
   id: string;
-  choices: Array<Choice>;
+  choices: Array<CompletionChoice>;
   model: string;
   created?: number;
   object?: string;

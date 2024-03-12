@@ -1,28 +1,4 @@
-import { Modelfarm } from './client';
-import { Usage, GoogleEmbeddingMetadata } from './structs';
-
-export class Embeddings {
-  _client: Modelfarm;
-
-  constructor(client: Modelfarm) {
-    this._client = client;
-  }
-
-  /**
-   * Converts text into numerical vectors
-   * @public
-   */
-  async create(options: EmbeddingOptions): Promise<EmbeddingModelResponse> {
-    const res = await this._client.makeSimpleRequest<EmbeddingModelResponse>(
-      'v1beta2/embeddings',
-      { ...options },
-    );
-    if (res.ok) {
-      return res.value;
-    }
-    throw new Error(res.error.message);
-  }
-}
+import type { Usage, GoogleEmbeddingMetadata } from '../structs';
 
 export interface Embedding {
   object: string;

@@ -1,19 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment*/
 
 import { expect, test } from 'vitest';
-import { Modelfarm } from './index';
+import * as replitai from '../index';
 
-async function fromAsync<T>(source: AsyncIterable<T>): Promise<Array<T>> {
+async function fromAsync<T>(
+  source: AsyncIterable<T> | undefined,
+): Promise<Array<T>> {
   const items = Array<T>();
-  for await (const item of source) {
-    items.push(item);
+  if (source) {
+    for await (const item of source) {
+      items.push(item);
+    }
   }
   return items;
 }
 
 test('non streaming chat', async () => {
-  const client = new Modelfarm();
-  const result = await client.chat.completions.create({
+  const { error, value: result } = await replitai.chat.completions.create({
     model: 'chat-bison',
     messages: [
       {
@@ -25,16 +28,18 @@ test('non streaming chat', async () => {
     max_tokens: 128,
   });
 
-  expect(result.choices.length).toBe(1);
+  expect(error).toBeFalsy();
+  expect(result).not.toBeUndefined();
 
-  const choice = result.choices[0];
+  expect(result?.choices.length).toBe(1);
+
+  const choice = result?.choices[0];
 
   expect(choice?.message.content?.length).toBeGreaterThan(10);
 });
 
 test('non streaming chat with extra parameters', async () => {
-  const client = new Modelfarm();
-  const result = await client.chat.completions.create({
+  const { error, value: result } = await replitai.chat.completions.create({
     model: 'chat-bison',
     messages: [
       {
@@ -51,16 +56,18 @@ test('non streaming chat with extra parameters', async () => {
     },
   });
 
-  expect(result.choices.length).toBe(1);
+  expect(error).toBeFalsy();
+  expect(result).not.toBeUndefined();
 
-  const choice = result.choices[0];
+  expect(result?.choices.length).toBe(1);
+
+  const choice = result?.choices[0];
 
   expect(choice?.message.content?.length).toBeGreaterThan(10);
 });
 
 test('streaming chat', async () => {
-  const client = new Modelfarm();
-  const results = await client.chat.completions.create({
+  const { error, value: results } = await replitai.chat.completions.create({
     model: 'chat-bison',
     messages: [
       {
@@ -73,6 +80,9 @@ test('streaming chat', async () => {
     stream: true,
   });
 
+  expect(error).toBeFalsy();
+  expect(results).not.toBeUndefined();
+
   const responses = await fromAsync(results);
 
   for await (const result of responses) {
@@ -83,8 +93,7 @@ test('streaming chat', async () => {
 });
 
 test('chat with multiple choices', async () => {
-  const client = new Modelfarm();
-  const result = await client.chat.completions.create({
+  const { error, value: result } = await replitai.chat.completions.create({
     model: 'chat-bison',
     messages: [
       {
@@ -96,6 +105,9 @@ test('chat with multiple choices', async () => {
     max_tokens: 128,
     n: 4,
   });
+
+  expect(error).toBeFalsy();
+  expect(result).not.toBeUndefined();
 
   expect(result).toMatchObject(
     expect.objectContaining({
@@ -109,5 +121,5 @@ test('chat with multiple choices', async () => {
       ]),
     }),
   );
-  expect(result.choices.length).toBeGreaterThan(1);
+  expect(result?.choices.length).toBeGreaterThan(1);
 });
