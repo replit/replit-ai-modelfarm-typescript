@@ -53,10 +53,9 @@ export async function doFetch(
   );
 }
 
-export async function makeStreamingRequest<T, R>(
+export async function makeStreamingRequest<R>(
   urlPath: string,
   body: Record<string, unknown>,
-  processJSON: (json: T) => R,
 ): Promise<result.Result<AsyncGenerator<R, void, void>, RequestError>> {
   const res = await doFetch(urlPath, body);
 
@@ -64,15 +63,14 @@ export async function makeStreamingRequest<T, R>(
     return res;
   }
 
-  const iterator = handleStreamingResponseBody(res.value.body, processJSON);
+  const iterator = handleStreamingResponseBody<R>(res.value.body);
 
   return result.Ok(iterator);
 }
 
-export async function makeSimpleRequest<T, R>(
+export async function makeSimpleRequest<R>(
   urlPath: string,
   body: Record<string, unknown>,
-  processJSON: (json: T) => R,
 ): Promise<result.Result<R, RequestError>> {
   const res = await doFetch(urlPath, body);
 
@@ -80,7 +78,7 @@ export async function makeSimpleRequest<T, R>(
     return res;
   }
 
-  const json = (await res.value.json()) as T;
+  const json = (await res.value.json()) as R;
 
-  return result.Ok(processJSON(json));
+  return result.Ok(json);
 }
