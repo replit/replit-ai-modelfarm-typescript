@@ -1,4 +1,4 @@
-import type { GoogleMetadata, Usage } from '../structs';
+import type { GoogleMetadata, Usage } from '../usageTypes';
 
 export interface CompletionChoice {
   index: number;

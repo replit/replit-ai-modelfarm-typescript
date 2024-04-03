@@ -1,4 +1,4 @@
-import type { Usage, GoogleEmbeddingMetadata } from '../structs';
+import type { Usage, GoogleEmbeddingMetadata } from '../usageTypes';
 
 export interface Embedding {
   object: string;

@@ -2,8 +2,12 @@
 
 ## 1.0.0
 
-* v1beta2 support
-* Changed schema for chat_completions, embeddings and completions.
+* Added support for v1beta2.
+  * Introduced `provider_extra_parameters`.
+  * Modified model requests/responses to align with widely used practices.
+  * Consolidated `chat` and `chatStreaming` functionalities into `chat.completions.create`.
+  * Consolidated `complete` and `completeStream` functionalities into `completions.create`.
+  * Expanded model response interfaces.
 
 ## 0.0.3
 

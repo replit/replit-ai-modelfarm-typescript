@@ -1,4 +1,4 @@
-import type { GoogleMetadata, Usage } from '../structs';
+import type { GoogleMetadata, Usage } from '../usageTypes';
 
 export interface FunctionCall {
   name: string;
@@ -111,10 +111,16 @@ export interface ChatOptionParamsBase {
 }
 
 export interface ChatOptionParamsStream extends ChatOptionParamsBase {
+  /**
+   * Wheter to stream the completions.
+   */
   stream: true;
 }
 
 export interface ChatOptionParamsNonStream extends ChatOptionParamsBase {
+  /**
+   * Wheter to stream the completions.
+   */
   stream?: false;
 }
 

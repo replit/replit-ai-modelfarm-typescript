@@ -16,11 +16,15 @@ import type {
  * @public
  */
 export async function create(
-  options: CompletionOptionsStream,
-): Promise<result.Result<AsyncGenerator<CompletionResponse>, RequestError>>;
-export async function create(
   options: CompletionOptionsNonStream,
 ): Promise<result.Result<CompletionResponse, RequestError>>;
+/**
+ * Gets a stream of completions for a piece of text.
+ * @public
+ */
+export async function create(
+  options: CompletionOptionsStream,
+): Promise<result.Result<AsyncGenerator<CompletionResponse>, RequestError>>;
 export async function create(
   options: CompletionOptions,
 ): Promise<

@@ -19,6 +19,12 @@ import type {
 export async function create(
   options: ChatOptionParamsNonStream,
 ): Promise<result.Result<ChatCompletionResponse, RequestError>>;
+/**
+ * Gets a single chat message completion for a conversation.
+ * The result contains an iterator of messages, please note that this would be
+ * a *single message* that has the contents chunked up.
+ * @public
+ */
 export async function create(
   options: ChatOptionParamsStream,
 ): Promise<
